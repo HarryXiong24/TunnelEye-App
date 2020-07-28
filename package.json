@@ -11,6 +11,8 @@
     "commit": "git-cz"
   },
   "dependencies": {
+    "@types/echarts": "^4.6.4",
+    "@types/moment": "^2.13.0",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "d3": "^5.16.0",

@@ -1,24 +1,41 @@
-# tunnel_eye_ts
+# Tunnel_Eye_App
+
+## Description
+
+Tunnel Eye App, typescript version.
 
 ## Project setup
-```
+
+``` bash
+# Install dependencies
 yarn install
 ```
 
-### Compiles and hot-reloads for development
-```
+``` bash
+# Compiles and hot-reloads for development
 yarn serve
 ```
 
-### Compiles and minifies for production
-```
+``` bash
+# Compiles and minifies for production
 yarn build
 ```
 
-### Lints and fixes files
-```
+``` bash
+# Lints and fixes files
 yarn lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Version
+
+### 0.0.1
+
+1. 初始化
+2. 搭建项目环境
+3. 配置插件
+
+### 0.0.2
+
+1. 完成登录页面
+2. 完成接口部分
+3. 完成Vuex

@@ -10,12 +10,13 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "types": [
       "webpack-env"
     ],
     "paths": {
       "@/*": [
+        "./node_modules",
         "src/*"
       ]
     },
@@ -23,15 +24,16 @@
       "esnext",
       "dom",
       "dom.iterable",
-      "scripthost"
+      "scripthost",
+      "ES2015",
+      "ES2016",
+      "ES2017"
     ]
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "tests/**/*.ts",
-    "tests/**/*.tsx"
   ],
   "exclude": [
     "node_modules"
