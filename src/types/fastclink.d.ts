@@ -1,1 +1,1 @@
-declare module "fastclick";
+declare module "fastclick"

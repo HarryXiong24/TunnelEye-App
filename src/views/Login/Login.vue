@@ -37,33 +37,34 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {Component, Vue} from 'vue-property-decorator'
 
 @Component
 export default class Login extends Vue {
+  
+  public validateForm = {
+    username: 'wjy',
+    password: 'rrr123',
+    captcha: ''
+  }
+  public visibility = false
+  public alert = false
+  public alertText = ''
 
   data() {
     return {
       usernameRules: [
-        { validate: (val) => !!val, message: '必须填写用户名'},
-        { validate: (val) => val.length >= 3, message: '用户名长度大于3'}
+        { validate: (val: any) => !!val, message: '必须填写用户名'},
+        { validate: (val: any) => val.length >= 3, message: '用户名长度大于3'}
       ],
       passwordRules: [
-        { validate: (val) => !!val, message: '必须填写密码'},
-        { validate: (val) => val.length >= 3 && val.length <= 10, message: '密码长度大于3小于10'}
+        { validate: (val: any) => !!val, message: '必须填写密码'},
+        { validate: (val: any) => val.length >= 3 && val.length <= 10, message: '密码长度大于3小于10'}
       ],
       captchaRules: [
-        { validate: (val) => !!val, message: '必须填写验证码'},
-      ],
-      validateForm: {
-        username: 'wjy',
-        password: 'rrr123',
-        captcha: ''
-      },
-      visibility: false,
-      alert: false,
-      alertText: ''
+        { validate: (val: any) => !!val, message: '必须填写验证码'},
+      ]
     }
   }
 
@@ -83,7 +84,7 @@ export default class Login extends Vue {
     }
   }
 
-  openSimpleDialog (alertText) {
+  openSimpleDialog (alertText: string) {
     this.alert = true
     this.alertText = alertText
   }
