@@ -53,3 +53,11 @@ yarn lint
 
 1. 完成了PersonInfo页面
 2. 完成了PersonList组件
+
+### 0.0.6
+
+1. 完成了Analysis页面
+2. 完成了Warning页面
+3. 设置了路由守卫
+4. 移动App与Web App测试均成功
+5. TS重构基本完毕

@@ -10,7 +10,7 @@ function isProd() {
 process.env.VUE_APP_BASE_API = isProd() ? '' : '';
 
 module.exports = {
-  publicPath: isProd() ? '/app-generator/' : '/', // 其中test要改为项目名称
+  publicPath: isProd() ? './' : '/', // 其中test要改为项目名称
   productionSourceMap: false,
   runtimeCompiler: true,
   chainWebpack: (config) => {
