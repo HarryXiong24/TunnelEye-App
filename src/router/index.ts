@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from "vue-router";
 const Login = () => import("../views/Login/Login.vue");
 const Init = () => import("../views/Init/Init.vue");
 const Location = () => import("../views/Location/Location.vue")
+const UserInfo = () => import("../views/UserInfo/UserInfo.vue")
 
 Vue.use(VueRouter);
 
@@ -17,6 +18,11 @@ const routes: Array<RouteConfig> = [
     path: '/Init',
     redirect: '/Init/Location',
     meta: { title: 'Main', requiresAuth: true }
+  },
+  {
+    path: '/UserInfo',
+    component: UserInfo,
+    meta: { title: 'UserInfo', requiresAuth: true }
   },
   {
     path: '/Init',

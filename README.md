@@ -44,3 +44,7 @@ yarn lint
 
 1. 完成Init页面
 2. 完成Location页面
+
+### 0.0.4
+
+1. 完成了UserInfo页面
