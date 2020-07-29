@@ -45,17 +45,118 @@
   </div>  
 </template>
 
-<script>
+<script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
+import PersonList from '../../components/PersonList/PersonList.vue';
+import moment from 'moment';
 
-
-@Component
+@Component({
+  components: {
+    PersonList
+  }
+})
 export default class PersonInfo extends Vue {
-  
+  public options: Array<any> = []
+  public normal: any = {
+    value: ""
+  }
+  public groupID: number = 0 
+  public columns: Array<object> =  [
+    { title: '工号', name: 'userid', width: 116, },
+    { title: '姓名', name: 'userName', width: 90,},
+    { title: '性别', name: 'sex', width: 76,},
+    { title: '是否在岗', name: 'state', width: 100,},
+    { title: '到岗时间', name: 'clockInTime', width: 200},
+  ]
+  public lists: Array<any> = []
+  public dateValue: any = new Date('2020-06-01')
+
+
+  async submit () {
+    let date = {date: moment(this.dateValue).format('YYYY-MM-DD')}
+    await this.$store.dispatch("getPersonInfo", date)
+    this.options = [],
+    this.lists = [],
+    this.normal.value = "",
+    this.$store.state.personInfo.forEach( (value: any) => {
+      this.options.push(value.groupName)
+      this.lists.push(value.users)
+    })
+    this.normal.value = this.options[0]
+  }
+
+  groupShow(value: any) {
+    for (let i = 0; i < this.options.length; i++) {
+      if (value === this.options[i]) {
+        this.groupID = i;
+      }
+    }
+  }
+
+  update () {
+    this.submit()
+    this.groupShow(this.options[0])
+  }
+
+  mounted () {
+    this.submit()
+  }
+
 } 
 
 </script>
 
-<style>
+<style lang="scss">
+  .personInfo {
+    .title {
+      font-size: 70px;
+      .site {
+        float: left;
+      }
+      .status {
+        float: right;
+      }
+    }
 
+    .wrap {
+      display: block;
+      width: 90%;
+      margin: 0 auto;
+      .choose {
+        font-size: 86px;
+      }
+    }
+
+    #th {
+      color: white;
+      font-size: 66px;
+    }
+
+    .subTitle1 {
+      margin: 80px 0;
+      font-size: 80px;
+      &::before {
+        content: '';
+        border-left: 20px #ff6f00 solid;
+        padding-left: 30px;
+      }
+    }
+
+    .subTitle2 {
+      margin-bottom: 100px;
+      font-size: 80px;
+      &::before {
+        content: '';
+        border-left: 20px #ff6f00 solid;
+        padding-left: 30px;
+      }
+    }
+
+    .update {
+      position: absolute;
+      right: 0;
+      bottom: 50px;
+    }
+
+  }
 </style>

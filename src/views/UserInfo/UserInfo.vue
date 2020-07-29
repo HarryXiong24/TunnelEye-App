@@ -75,7 +75,7 @@ import {Component, Vue} from 'vue-property-decorator';
 
 @Component
 export default class UserInfo extends Vue {
-  public userInfo: {} = {}
+  private userInfo: {} = {}
 
   back () {
     this.$router.push('/Init')

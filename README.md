@@ -48,3 +48,8 @@ yarn lint
 ### 0.0.4
 
 1. 完成了UserInfo页面
+
+### 0.0.5
+
+1. 完成了PersonInfo页面
+2. 完成了PersonList组件
