@@ -7,7 +7,7 @@ import axios from 'axios'
 
 const BASE_URL = 'http://121.89.223.235:8081'
 // const BASE_URL = '/api'
-
+import {decrypt} from '../util/crypto'
 
 // 获取验证码
 export const reqCaptcha = () => {
@@ -60,7 +60,7 @@ export const reqPersonInfo = (date: any) => {
     method: 'get',
     url: BASE_URL+ '/PersonInfo',
     headers: {
-      Authorization: sessionStorage.getItem("token")
+      Authorization: decrypt(sessionStorage.getItem("token"))
     },
     params: date
   })
@@ -82,7 +82,7 @@ export const reqMachineInfo = () => {
     method: 'get',
     url: BASE_URL+ '/node',
     headers: {
-      Authorization: sessionStorage.getItem("token")
+      Authorization: decrypt(sessionStorage.getItem("token"))
     }
   })
 
@@ -103,7 +103,7 @@ export const reqAllSensorInfo = (data: any) => {
     method: 'get',
     url: BASE_URL+ '/sensor/infos',
     headers: {
-      Authorization: sessionStorage.getItem("token")
+      Authorization: decrypt(sessionStorage.getItem("token"))
     },
     params: data
   })
@@ -125,7 +125,7 @@ export const reqSensorData = (data: any) => {
     method: 'get',
     url: BASE_URL+ '/sensor/data',
     headers: {
-      Authorization: sessionStorage.getItem("token")
+      Authorization: decrypt(sessionStorage.getItem("token"))
     },
     params: data
   })
@@ -147,7 +147,7 @@ export const reqAllUWBInfo = (data: any) => {
     method: 'get',
     url: BASE_URL+ '/uwb/datas',
     headers: {
-      Authorization: sessionStorage.getItem("token")
+      Authorization: decrypt(sessionStorage.getItem("token"))
     },
     params: data
   })
@@ -169,7 +169,7 @@ export const reqUWBData = (data: any) => {
     method: 'get',
     url: BASE_URL+ '/uwb/userdata',
     headers: {
-      Authorization: sessionStorage.getItem("token")
+      Authorization: decrypt(sessionStorage.getItem("token"))
     },
     params: data
   })

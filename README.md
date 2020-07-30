@@ -61,3 +61,7 @@ yarn lint
 3. 设置了路由守卫
 4. 移动App与Web App测试均成功
 5. TS重构基本完毕
+
+### 0.1.1
+
+1. 对sessionStorage进行加密处理

@@ -39,6 +39,7 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator'
+import {encrypt} from '../../util/crypto'
 
 @Component
 export default class Login extends Vue {
@@ -73,8 +74,11 @@ export default class Login extends Vue {
     {
       await this.$store.dispatch('getUserInfo', this.validateForm)
       if (this.$store.state.userInfo.success === true) {
-        sessionStorage.setItem("token", this.$store.state.userInfo.token)
-        sessionStorage.setItem("userInfo",  JSON.stringify(this.$store.state.userInfo.user))
+        // 加密sessionStorage
+        let token = encrypt(this.$store.state.userInfo.token)
+        let userInfo = encrypt(JSON.stringify(this.$store.state.userInfo.user))
+        sessionStorage.setItem("token", token)
+        sessionStorage.setItem("userInfo", userInfo)
         this.$router.push('/Init')
       } else {
         this.openSimpleDialog(this.$store.state.userInfo.msg) 
