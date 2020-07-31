@@ -190,7 +190,7 @@ import carouselImg3 from './img/3.jpg';
 
 @Component
 export default class Warning extends Vue {
-  private active:number = 0
+  private active: number = 0
 
   data() {
     return {
@@ -200,7 +200,7 @@ export default class Warning extends Vue {
     }
   }
 
-  changeActive (index: number) {
+  changeActive(index: number) {
     this.active = index;
   }
 }

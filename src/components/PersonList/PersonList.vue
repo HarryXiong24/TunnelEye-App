@@ -45,11 +45,11 @@ export default class PersonList extends Vue {
   @Prop(Array) private columns!: Array<any>
   @Prop(Array) private list!: Array<any>
 
-  handleSortChange ({name, order}: any) {
+  handleSortChange({name, order}: {name: string, order: string}) {
     this.list = this.list.sort((a, b) => order === 'asc' ? a[name] - b[name] : b[name] - a[name]);
   }
 
-  setrowStyle (rowIndex: number) {
+  setrowStyle(rowIndex: number) {
     if (rowIndex % 2 === 0) {
       return {
         height: '50px',
@@ -64,7 +64,6 @@ export default class PersonList extends Vue {
       }
     }
   }
-
 
 }
 </script>

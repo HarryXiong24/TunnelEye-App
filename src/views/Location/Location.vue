@@ -113,7 +113,6 @@
 </template>
 
 <script lang="ts">
-import getTime from '../../components/getTime/getTime';
 import * as d3 from 'd3';
 import moment from 'moment'
 import { Vue, Component } from 'vue-property-decorator';
@@ -245,7 +244,7 @@ export default class Location extends Vue {
             that.name = "xxx"
             that.sex = "男"
             that.position = `(${cx},${cy})`
-            that.time = getTime('time')
+            that.time = moment().format('HH:mm:ss')
             d3.select(this) 
             .attr("r", 12)
             .attr("fill","#aa00ff")
@@ -282,7 +281,7 @@ export default class Location extends Vue {
       
     // 刷新时间
     setInterval( () => {
-      this.nowTime = getTime('all')
+      this.nowTime = moment().format('YYYY-MM-DD HH:mm:ss')
     }, 10);
 
     // 选择svg画布

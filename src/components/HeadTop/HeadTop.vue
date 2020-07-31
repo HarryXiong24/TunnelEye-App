@@ -50,7 +50,7 @@ export default class HeadTop extends Vue {
 
   mounted () {
     setInterval( () => {
-      this.time = moment().format('YYYY-MM-HH HH:mm:ss')
+      this.time = moment().format('YYYY年M月H日 HH:mm:ss')
     }, 100)
   }
 }

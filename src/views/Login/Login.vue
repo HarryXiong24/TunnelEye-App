@@ -83,7 +83,7 @@ export default class Login extends Vue {
           // 存入sessionStorage
           sessionStorage.setItem("token", token)
           sessionStorage.setItem("userInfo", userInfo)
-          this.$router.push('/Init')
+          this.$router.replace('/Init')
         } else {
           this.openSimpleDialog(this.$store.state.userInfo.msg) 
         }

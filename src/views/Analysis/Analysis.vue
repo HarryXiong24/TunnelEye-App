@@ -159,21 +159,21 @@ import moment from 'moment';
 export default class Analysis extends Vue {
   public sensorType: string =  ''
   public machine: Array<string> = []
-  public machineNormal: any = {
+  public machineNormal = {
     value: ""
   }
   public sensorOptions: Array<string> = ["甲烷", "氧气", "硫化氢", "一氧化碳", "液位传感器"]
-  public sensorNormal: any = {
+  public sensorNormal = {
     value: "甲烷"
   }
   public sensorIDOptions: Array<string> = []
-  public sensorIDNormal: any = {
+  public sensorIDNormal = {
     value: ""
   }
-  public dateValue: any = new Date()
+  public dateValue: Date = new Date()
 
   // 决定统计图的类别
-  public chartNormal: any = {
+  public chartNormal = {
     value: '折线',
   }
 
@@ -221,7 +221,8 @@ export default class Analysis extends Vue {
       }
     },
     dataZoom: [{
-      startValue: '00:00:00',
+      start: 95,
+      end: 100
     }, {
       type: 'inside'
     }],
@@ -329,7 +330,8 @@ export default class Analysis extends Vue {
       }
     },
     dataZoom: [{
-      startValue: '00:00:00',
+      start: 96,
+      end: 100
     }, {
       type: 'inside'
     }],
@@ -460,7 +462,7 @@ export default class Analysis extends Vue {
     ]
   }
   // 更新下位机信息
-  async initMachineInfo () {
+  async initMachineInfo() {
     await this.$store.dispatch("getMachineInfo")
     // 把下位机信息显示
     let machineInfo: Array<any> = this.$store.state.machineInfo
@@ -474,7 +476,7 @@ export default class Analysis extends Vue {
     this.machineNormal.value = this.machine[0] 
   }
   // 更新所有传感器信息，获取具体节点
-  async initAllSensorInfo () {
+  async initAllSensorInfo() {
     this.judgeSensorName(this.sensorNormal.value)
     let data = {
       nodeId: this.machineNormal.value.split("下位机")[1],
@@ -498,7 +500,7 @@ export default class Analysis extends Vue {
     this.sensorIDNormal.value = this.sensorIDOptions[0] 
   }
   // 更新传感器获取数据
-  async initSensorData () {
+  async initSensorData() {
     this.judgeSensorName(this.sensorNormal.value)
     let data = {
       nodeId: this.machineNormal.value.split("下位机")[1],
@@ -527,7 +529,7 @@ export default class Analysis extends Vue {
     this.sensorIDNormal.value = this.sensorIDOptions[0]
   }
   // 更新图表数据
-  async initChartData () {
+  async initChartData() {
     this.getAverage(this.YData)
     this.getExtremeValue(this.YData)
     this.getParts(this.YData)
@@ -544,12 +546,12 @@ export default class Analysis extends Vue {
     this.pieChartOptions.series.data = this.parts
   }
   // MachineInfo选择栏发生变化，触发更新
-  async updateMachineInfo () {
+  async updateMachineInfo() {
     this.initAllSensorInfo ()
     this.initSensorData()
     this.initChartData()
   }
-  async updateAllSensorInfo () {
+  async updateAllSensorInfo() {
     this.judgeSensorName(this.sensorNormal.value)
     let data = {
       nodeId: this.machineNormal.value.split("下位机")[1],
@@ -567,7 +569,7 @@ export default class Analysis extends Vue {
     await this.initSensorData()
     await this.initChartData()
   }
-  async updateSensorData () {
+  async updateSensorData() {
     this.judgeSensorName(this.sensorNormal.value)
     let data = {
       nodeId: this.machineNormal.value.split("下位机")[1],
