@@ -40,18 +40,19 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator'
 import {encrypt} from '../../util/crypto'
+import {ValidateForm} from './constraint'
 
 @Component
 export default class Login extends Vue {
   
-  public validateForm = {
+  private validateForm: ValidateForm = {
     username: 'wjy',
     password: 'rrr123',
     captcha: ''
   }
-  public visibility = false
-  public alert = false
-  public alertText = ''
+  private visibility = false
+  private alert = false
+  private alertText = ''
 
   data() {
     return {
@@ -69,40 +70,46 @@ export default class Login extends Vue {
     }
   }
 
-   async submit () {
+  // 登录验证
+  async submit() {
     if (this.validateForm.username !== '' && this.validateForm.password !== '' && this.validateForm.captcha !== '') 
     {
       await this.$store.dispatch('getUserInfo', this.validateForm)
-      if (this.$store.state.userInfo.success === true) {
-        // 加密sessionStorage
-        let token = encrypt(this.$store.state.userInfo.token)
-        let userInfo = encrypt(JSON.stringify(this.$store.state.userInfo.user))
-        sessionStorage.setItem("token", token)
-        sessionStorage.setItem("userInfo", userInfo)
-        this.$router.push('/Init')
+      if (this.$store.state.userInfo) {
+        if (this.$store.state.userInfo.success === true) {
+          // 加密sessionStorage
+          let token: string = encrypt(this.$store.state.userInfo.token)
+          let userInfo: string = encrypt(JSON.stringify(this.$store.state.userInfo.user))
+          // 存入sessionStorage
+          sessionStorage.setItem("token", token)
+          sessionStorage.setItem("userInfo", userInfo)
+          this.$router.push('/Init')
+        } else {
+          this.openSimpleDialog(this.$store.state.userInfo.msg) 
+        }
       } else {
-        this.openSimpleDialog(this.$store.state.userInfo.msg) 
-      }
+        this.openSimpleDialog('服务器错误!')
+      } 
     } else {
       this.openSimpleDialog('信息不能为空!')
     }
   }
 
-  openSimpleDialog (alertText: string) {
+  openSimpleDialog(alertText: string): void {
     this.alert = true
     this.alertText = alertText
   }
 
-  closeSimpleDialog () {
+  closeSimpleDialog(): void {
     this.alert = false
     this.alertText = ''
   }
 
-  async changeCaptcha () {
+  async changeCaptcha() {
     await this.$store.dispatch('getCaptcha')
   }
 
-  mounted () {
+  mounted() {
     this.changeCaptcha()
   }
 
@@ -111,57 +118,57 @@ export default class Login extends Vue {
 </script>
 
 <style lang="scss">
-$font:#2d3a4b;
-$bio: #2d3a4bcb;
-$dark_gray:#889aa4;
-$light_gray:#eee;
+  $font:#2d3a4b;
+  $bio: #2d3a4bcb;
+  $dark_gray:#889aa4;
+  $light_gray:#eee;
 
-.login-container {
-  min-height: 100%;
-  width: 100%;
-  background-color: $light_gray;
-  overflow: hidden;
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+  .login-container {
+    min-height: 100%;
+    width: 100%;
+    background-color: $light_gray;
+    overflow: hidden;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
 
-  .logo {
-    width: 400px;
-    height: 400px;
-    margin: 280px auto 220px auto;
-  }
+    .logo {
+      width: 400px;
+      height: 400px;
+      margin: 280px auto 220px auto;
+    }
 
-  .title-container { 
-    font-size: 140px;
-    color: $font;
-    margin: 0px auto 200px auto;
-    text-align: center;
-    font-weight: bold;
-  }
+    .title-container { 
+      font-size: 140px;
+      color: $font;
+      margin: 0px auto 200px auto;
+      text-align: center;
+      font-weight: bold;
+    }
 
-  .mu-demo-form {
-    width: 90%;
-    margin: 0 auto;
-    position: relative;
-    .captcha {
+    .mu-demo-form {
+      width: 90%;
+      margin: 0 auto;
+      position: relative;
+      .captcha {
+        position: absolute;
+        bottom: 80px;
+        right: -50px;
+      }
+    }
+
+    .bio-container {
+      font-size: 60px;
+      color: $bio;
       position: absolute;
-      bottom: 80px;
-      right: -50px;
+      bottom: 10px;
+      right: 60px;
+    }
+
+    .alert {
+      color: $font;
     }
   }
-
-  .bio-container {
-    font-size: 60px;
-    color: $bio;
-    position: absolute;
-    bottom: 10px;
-    right: 60px;
-  }
-
-  .alert {
-    color: $font;
-  }
-}
 </style>

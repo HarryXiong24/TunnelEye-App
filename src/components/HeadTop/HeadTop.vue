@@ -17,7 +17,7 @@
         </mu-list-item>
       </mu-list>
     </mu-menu>
-    <div slot="default" class="title" v-show="model === 2">
+    <div slot="default" class="title">
       <div>{{title}}</div>
       <div>{{time}}</div>
     </div>
@@ -30,22 +30,21 @@ import moment from 'moment';
 
 @Component
 export default class HeadTop extends Vue {
-  @Prop(Number) private model!: number
   @Prop(String) private title!: string
-  private time = ''
-  private value = ''
-  private open = false
+  private time: string = ''
+  private value: string = ''
+  private open: boolean = false
 
-  logout() {
+  logout(): void {
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('userInfo')
     this.$router.push('/')
   }
-  getLocation (value: string) {
+  getLocation(value: string): void {
     this.value = value
     this.open = false
   }
-  goUserInfo () {
+  goUserInfo(): void {
     this.$router.push('/UserInfo')
   }
 

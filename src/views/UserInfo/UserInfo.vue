@@ -72,17 +72,18 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator';
+import { decrypt } from '../../util/crypto';
 
 @Component
 export default class UserInfo extends Vue {
   private userInfo: {} = {}
 
   back () {
-    this.$router.push('/Init')
+    this.$router.back()
   }
 
   mounted() {
-    this.userInfo = JSON.parse(sessionStorage.getItem('userInfo')!)
+    this.userInfo = JSON.parse(decrypt(sessionStorage.getItem('userInfo')!))
   }
 }
 

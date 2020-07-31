@@ -1,4 +1,5 @@
 // 直接更新state的多个方法的对象
+import { State } from '../constraint';
 
 import {
   RECEIVE_USERINFO,
@@ -12,28 +13,28 @@ import {
 } from './mutation-types'
 
 export default {
-  [RECEIVE_USERINFO] (state: any, {userInfo}: any) {
+  [RECEIVE_USERINFO] (state: State, {userInfo}: any) {
     state.userInfo = userInfo
   },
-  [RECEIVE_CAPTCHA] (state: any, {captcha}: any) {
+  [RECEIVE_CAPTCHA] (state: State, {captcha}: any) {
     state.captcha = captcha
   },
-  [RECEIVE_PERSONINFO] (state: any, {personInfo}: any) {
+  [RECEIVE_PERSONINFO] (state: State, {personInfo}: any) {
     state.personInfo = personInfo
   },
-  [RECEIVE_MACHINEINFO] (state: any, {machineInfo}: any) {
+  [RECEIVE_MACHINEINFO] (state: State, {machineInfo}: any) {
     state.machineInfo = machineInfo
   },
-  [RECEIVE_ALLSENSORINFO] (state: any, {allSensorInfo}: any) {
+  [RECEIVE_ALLSENSORINFO] (state: State, {allSensorInfo}: any) {
     state.allSensorInfo = allSensorInfo
   },
-  [RECEIVE_SENSORDATA] (state: any, {sensorData}: any) {
+  [RECEIVE_SENSORDATA] (state: State, {sensorData}: any) {
     state.sensorData = sensorData
   },
-  [RECEIVE_ALLUWBINFO] (state: any, {allUWBInfo}: any) {
+  [RECEIVE_ALLUWBINFO] (state: State, {allUWBInfo}: any) {
     state.allUWBInfo = allUWBInfo
   },
-  [RECEIVE_UWBDATA] (state: any, {UWBData}: any) {
+  [RECEIVE_UWBDATA] (state: State, {UWBData}: any) {
     state.UWBData = UWBData
   }
 }

@@ -148,7 +148,6 @@
       </mu-alert>
     </mu-row> 
 
-
   </div>  
 </template>
 
@@ -171,7 +170,7 @@ export default class Analysis extends Vue {
   public sensorIDNormal: any = {
     value: ""
   }
-  public dateValue: any = new Date('2020-6-1')
+  public dateValue: any = new Date()
 
   // 决定统计图的类别
   public chartNormal: any = {
@@ -425,7 +424,7 @@ export default class Analysis extends Vue {
     data.forEach( (val) => {
       sum += val
     })
-    this.average = sum / data.length;
+    this.average = Number((sum/data.length).toFixed(2))
   }
   // 求最大值和最小值
   getExtremeValue (data: Array<number>) {
@@ -433,8 +432,8 @@ export default class Analysis extends Vue {
     arr.sort( (a,b) => {
       return a-b
     })
-    this.maxData = arr[data.length - 1]
-    this.minData = arr[0]
+    this.maxData = Number(arr[data.length - 1].toFixed(2))
+    this.minData = Number(arr[0].toFixed(2))
   }
   // 求分段
   getParts (data: Array<number>) {
@@ -510,6 +509,7 @@ export default class Analysis extends Vue {
     }
     await this.$store.dispatch('getSensorData', data)
     let sensorData: any = this.$store.state.sensorData
+    console.log(sensorData)
     if (sensorData.code && sensorData.code === -1) {
       this.hasData = false
       return 
@@ -526,7 +526,7 @@ export default class Analysis extends Vue {
     })
     this.sensorIDNormal.value = this.sensorIDOptions[0]
   }
-  // 更新图标数据
+  // 更新图表数据
   async initChartData () {
     this.getAverage(this.YData)
     this.getExtremeValue(this.YData)
@@ -549,7 +549,6 @@ export default class Analysis extends Vue {
     this.initSensorData()
     this.initChartData()
   }
-  // MachineInfo选择栏发生变化，触发更新
   async updateAllSensorInfo () {
     this.judgeSensorName(this.sensorNormal.value)
     let data = {
@@ -565,16 +564,39 @@ export default class Analysis extends Vue {
     allSensorInfo.forEach((val: any) => {
       this.sensorIDOptions.push(String(val.sensorAdd))
     })
-    this.initSensorData()
-    this.initChartData()
+    await this.initSensorData()
+    await this.initChartData()
   }
   async updateSensorData () {
-    this.initSensorData()
-    this.initChartData()
+    this.judgeSensorName(this.sensorNormal.value)
+    let data = {
+      nodeId: this.machineNormal.value.split("下位机")[1],
+      type: this.sensorType,
+      startTime: moment(this.dateValue).format('YYYY-MM-DD')+'-00:00:00',
+      endTime: moment(this.dateValue).format('YYYY-MM-DD')+'-23:59:59',
+      sensorAdd: this.sensorIDNormal.value
+    }
+    await this.$store.dispatch('getSensorData', data)
+    let sensorData: any = this.$store.state.sensorData
+    if (sensorData.code && sensorData.code === -1) {
+      this.hasData = false
+      return 
+    } else {
+      this.hasData = true
+    }
+    // 给值前先置空
+    this.XData = []
+    this.YData = []
+    sensorData.data.forEach( (val: any) => {
+      let time = val.measureTime.split(" ")[1]
+      this.XData.push(time)
+      this.YData.push(val.value)
+    })
+    await this.initChartData()
   }
   async updateChartData () {
-    this.initSensorData()
-    this.initChartData()
+    await this.initSensorData()
+    await this.initChartData()
   }  
 
 }

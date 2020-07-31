@@ -1,6 +1,7 @@
+import { State } from '../constraint';
 // 全局状态对象
 
-export default {
+const state: State = {
   userInfo: {},
   captcha: '',
   personInfo: {},
@@ -10,3 +11,5 @@ export default {
   allUWBInfo: {},
   UWBData: {},
 }
+
+export default state

@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <!-- Init页面应该控制不同位置的显示 -->
-    <HeadTop :model="headModel" :title="headTitle">
+    <HeadTop :title="headTitle">
     </HeadTop>
     <router-view/>
     <!-- 占位用 -->
@@ -33,23 +33,18 @@ import HeadTop from '../../components/HeadTop/HeadTop.vue';
   }
 })
 export default class Init extends Vue {
-  public headModel = 2
-  public shift = 'Location'
-  public headTitle = ''
+  private shift: string = 'Location'
+  public headTitle: string = ''
 
   getHead() {
     if (this.shift === 'Location') {
       this.headTitle = '人员定位'
-      this.headModel = 2
     } else if (this.shift === 'PersonInfo') {
       this.headTitle = '出勤信息'
-      this.headModel = 2
     } else if (this.shift === 'Analysis') {
       this.headTitle = '环境监测'
-      this.headModel = 2
     } else if (this.shift === 'Warning') {
       this.headTitle = '预警信息'
-      this.headModel = 2
     }
   }
 

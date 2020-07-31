@@ -38,7 +38,7 @@
 
     <mu-container>
 
-      <PersonList :columns="columns" :list="lists[this.groupID]"></PersonList>
+      <PersonList :columns="columns" :list="lists[this.groupId]"></PersonList>
 
     </mu-container>
 
@@ -60,7 +60,7 @@ export default class PersonInfo extends Vue {
   public normal: any = {
     value: ""
   }
-  public groupID: number = 0 
+  public groupId: number = -1
   public columns: Array<object> =  [
     { title: '工号', name: 'userid', width: 116, },
     { title: '姓名', name: 'userName', width: 90,},
@@ -75,31 +75,34 @@ export default class PersonInfo extends Vue {
   async submit () {
     let date = {date: moment(this.dateValue).format('YYYY-MM-DD')}
     await this.$store.dispatch("getPersonInfo", date)
-    this.options = [],
-    this.lists = [],
-    this.normal.value = "",
+    this.options = []
+    this.lists = []
+    this.groupId = -1
+    this.normal.value = ""
     this.$store.state.personInfo.forEach( (value: any) => {
       this.options.push(value.groupName)
       this.lists.push(value.users)
     })
-    this.normal.value = this.options[0]
   }
 
   groupShow(value: any) {
     for (let i = 0; i < this.options.length; i++) {
       if (value === this.options[i]) {
-        this.groupID = i;
+        this.groupId = i;
       }
     }
   }
 
-  update () {
-    this.submit()
-    this.groupShow(this.options[0])
+  async update() {
+    await this.submit()
+    this.normal.value = this.options[0]
+    this.groupShow(this.normal.value)
   }
 
-  mounted () {
-    this.submit()
+  async mounted () {
+    await this.submit()
+    this.normal.value = this.options[0]
+    this.groupShow(this.normal.value)
   }
 
 } 
