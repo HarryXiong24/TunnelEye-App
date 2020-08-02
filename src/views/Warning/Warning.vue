@@ -3,37 +3,44 @@
 
     <p class="title">当日天气</p>
 
-    <mu-row class="weather">
-      <mu-alert color="#ffca28" class="item">
-        <mu-icon value="wb_sunny" class="icon"></mu-icon>
-        <p class="content">温度 30℃</p>
-      </mu-alert>
-
-      <mu-alert color="#4caf50" class="item">
-        <mu-icon value="wb_cloudy" class="icon"></mu-icon> 
-        <p class="content">多云转晴</p>
+    <mu-row class="weather" v-if="weatherData.has">
+      <mu-alert color="#ec407a" class="item">
+        <mu-icon value="filter_drama" class="icon"></mu-icon> 
+        <p class="content">{{weatherData.city}}</p>
       </mu-alert>
 
       <mu-alert color="#039be5" class="item">
-        <mu-icon value="toys" class="icon"></mu-icon> 
-        <p class="content">西南风4级</p>
-      </mu-alert>
-
-      <mu-alert color="#ec407a" class="item">
-        <mu-icon value="filter_drama" class="icon"></mu-icon> 
-        <p class="content">空气质量优</p>
+        <mu-icon value="wb_cloudy" class="icon"></mu-icon> 
+        <p class="content">{{weatherData.type}}</p>
       </mu-alert>
 
       <mu-alert color="#9c27b0" class="item">
+        <mu-icon value="toys" class="icon"></mu-icon> 
+        <p class="content">{{weatherData.windPower}}</p>
+      </mu-alert>
+
+      <mu-alert color="#ffca28" class="item">
+        <mu-icon value="wb_sunny" class="icon"></mu-icon>
+        <p class="content">{{weatherData.average}}</p>
+      </mu-alert>
+
+      <mu-alert color="#4caf50" class="item">
         <mu-icon value="network_check" class="icon"></mu-icon> 
-        <p class="content">湿度45%</p>
+        <p class="content">{{weatherData.low}}</p>
       </mu-alert>
 
       <mu-alert color="#f44336" class="item">
         <mu-icon value="flash_on" class="icon"></mu-icon> 
-        <p class="content">降水概率小</p>
+        <p class="content">{{weatherData.high}}</p>
       </mu-alert>
     </mu-row>
+
+    <mu-row v-else>
+      <mu-alert color="error" class="alert">
+        <mu-icon value="warning" class="icon"></mu-icon> 
+        <p class="content">抱歉，当前位置获取失败，暂无数据</p>
+      </mu-alert>
+    </mu-row> 
 
     <p class="title">预警信息</p>
 
@@ -191,6 +198,15 @@ import carouselImg3 from './img/3.jpg';
 @Component
 export default class Warning extends Vue {
   private active: number = 0
+  public weatherData = {
+    has: false,
+    city: '',
+    type: '',
+    windPower: '',
+    average: '',
+    high: '',
+    low: '',
+  }
 
   data() {
     return {
@@ -203,6 +219,36 @@ export default class Warning extends Vue {
   changeActive(index: number) {
     this.active = index;
   }
+
+  async getWeather () {
+    let IPINfo = JSON.parse(sessionStorage.getItem('location')!)
+    let data = {city: IPINfo.city}
+    await this.$store.dispatch('getWeatherInfo', data)
+    let weatherInfo = this.$store.state.weatherInfo 
+    if (weatherInfo && weatherInfo.status === 1000) {
+      this.weatherData.has = true
+      let data = weatherInfo.data
+      this.weatherData.city = data.city
+      this.weatherData.type = data.forecast[0].type
+
+      // 计算风力
+      let windRank = data.forecast[0].fengli.match(/\d/)
+
+      this.weatherData.windPower = data.forecast[0].fengxiang + windRank + '级'
+      this.weatherData.average = '平均 ' + data.wendu + '℃'
+      this.weatherData.low = data.forecast[0].low
+      this.weatherData.high = data.forecast[0].high
+
+    } else {
+      this.weatherData.has = false
+    }
+  }
+
+  async mounted() {
+    await this.getWeather()
+  }
+
+
 }
 
 </script>
@@ -230,6 +276,17 @@ export default class Warning extends Vue {
         .icon {
           margin: 20px auto;
         }
+      }
+    }
+
+    .alert {
+      width: 90%;
+      margin: 0 auto;
+      .icon {
+        margin-right: 30px;
+      }
+      .content {
+        font-size: 66px;
       }
     }
 

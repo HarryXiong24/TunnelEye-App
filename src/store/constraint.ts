@@ -7,4 +7,5 @@ export interface State {
   sensorData: {}
   allUWBInfo: {}
   UWBData: {}
+  weatherInfo: {}
 }

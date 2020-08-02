@@ -10,6 +10,7 @@ import {
   RECEIVE_SENSORDATA,
   RECEIVE_ALLUWBINFO,
   RECEIVE_UWBDATA,
+  RECEIVE_WEATHERINFO,
 } from './mutation-types'
 
 import {
@@ -21,6 +22,7 @@ import {
   reqSensorData,
   reqAllUWBInfo,
   reqUWBData,
+  reqWeatherInfo,
 } from '../../api/index'
 
 export default {
@@ -99,7 +101,17 @@ export default {
     // 提交一个mutation
     const UWBData = result.data
     commit(RECEIVE_UWBDATA, {UWBData})
+  },
+
+  // 异步获取天气信息
+  async getWeatherInfo({commit}: any, data: any) {
+    // 发送异步ajax请求
+    const result = await reqWeatherInfo(data)
+    // 提交一个mutation
+    const weatherInfo = result.data
+    commit(RECEIVE_WEATHERINFO, {weatherInfo})
   }
+
 
   // // 异步获取食品分类列表
   // async getCategorys({commit}) {

@@ -9,7 +9,8 @@ import {
   RECEIVE_ALLSENSORINFO,
   RECEIVE_SENSORDATA,
   RECEIVE_ALLUWBINFO,
-  RECEIVE_UWBDATA
+  RECEIVE_UWBDATA,
+  RECEIVE_WEATHERINFO,
 } from './mutation-types'
 
 export default {
@@ -36,5 +37,8 @@ export default {
   },
   [RECEIVE_UWBDATA] (state: State, {UWBData}: any) {
     state.UWBData = UWBData
+  },
+  [RECEIVE_WEATHERINFO] (state: State, {weatherInfo}: any) {
+    state.weatherInfo = weatherInfo
   }
 }

@@ -1,8 +1,8 @@
 {
-  "name": "tunnel_eye_ts",
+  "name": "tunnel-eye-app",
   "version": "0.1.0",
   "author": "HarryXiong",
-  "description": "Tunnel Eye App, typescript version.",
+  "description": "Tunnel-Eye App, developed by Typescript and Vue.",
   "license": "MIT",
   "scripts": {
     "serve": "vue-cli-service serve",

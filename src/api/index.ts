@@ -60,7 +60,7 @@ export const reqPersonInfo = (date: any) => {
     method: 'get',
     url: BASE_URL+ '/PersonInfo',
     headers: {
-      Authorization: decrypt(sessionStorage.getItem("token"))
+      'Authorization': decrypt(sessionStorage.getItem("token"))
     },
     params: date
   })
@@ -82,7 +82,7 @@ export const reqMachineInfo = () => {
     method: 'get',
     url: BASE_URL+ '/node',
     headers: {
-      Authorization: decrypt(sessionStorage.getItem("token"))
+      'Authorization': decrypt(sessionStorage.getItem("token"))
     }
   })
 
@@ -103,7 +103,7 @@ export const reqAllSensorInfo = (data: any) => {
     method: 'get',
     url: BASE_URL+ '/sensor/infos',
     headers: {
-      Authorization: decrypt(sessionStorage.getItem("token"))
+      'Authorization': decrypt(sessionStorage.getItem("token"))
     },
     params: data
   })
@@ -125,7 +125,7 @@ export const reqSensorData = (data: any) => {
     method: 'get',
     url: BASE_URL+ '/sensor/data',
     headers: {
-      Authorization: decrypt(sessionStorage.getItem("token"))
+      'Authorization': decrypt(sessionStorage.getItem("token"))
     },
     params: data
   })
@@ -147,7 +147,7 @@ export const reqAllUWBInfo = (data: any) => {
     method: 'get',
     url: BASE_URL+ '/uwb/datas',
     headers: {
-      Authorization: decrypt(sessionStorage.getItem("token"))
+      'Authorization': decrypt(sessionStorage.getItem("token"))
     },
     params: data
   })
@@ -169,7 +169,30 @@ export const reqUWBData = (data: any) => {
     method: 'get',
     url: BASE_URL+ '/uwb/userdata',
     headers: {
-      Authorization: decrypt(sessionStorage.getItem("token"))
+      'Authorization': decrypt(sessionStorage.getItem("token"))
+    },
+    params: data
+  })
+
+  return new Promise<any>(function (resolve, reject) {
+    promise.then(function (response) {
+      // 成功了调用resolve()
+      resolve(response)
+    }).catch(function (error) {
+      //失败了调用reject()
+      reject(error)
+    })
+  })
+}
+
+
+// 获取天气
+export const reqWeatherInfo = (data: any) => {
+  let promise = axios({
+    method: 'get',
+    url: 'http://wthrcdn.etouch.cn/weather_mini',
+    headers: {
+      'Content-Type': 'application/json; charset=UTF-8'
     },
     params: data
   })

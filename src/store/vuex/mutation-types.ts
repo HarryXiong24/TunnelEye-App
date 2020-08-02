@@ -18,6 +18,8 @@ export const RECEIVE_SENSORDATA = 'receive_sensorData'
 export const RECEIVE_ALLUWBINFO = 'receive_allUWBInfo'
 // 接受指定UWB定位标签的定位数据
 export const RECEIVE_UWBDATA = 'receive_UWBData'
+// 接受天气信息
+export const RECEIVE_WEATHERINFO = 'receive_weatherInfo'
 
 
 

@@ -10,6 +10,7 @@ const state: State = {
   sensorData: {},
   allUWBInfo: {},
   UWBData: {},
+  weatherInfo: {},
 }
 
 export default state
