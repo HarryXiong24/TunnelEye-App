@@ -58,7 +58,7 @@ export const reqUserInfo = (loginMsg: any) => {
 export const reqPersonInfo = (date: any) => {
   let promise = axios({
     method: 'get',
-    url: BASE_URL+ '/PersonInfo',
+    url: BASE_URL + '/PersonInfo',
     headers: {
       'Authorization': decrypt(sessionStorage.getItem("token"))
     },
@@ -80,7 +80,7 @@ export const reqPersonInfo = (date: any) => {
 export const reqMachineInfo = () => {
   let promise = axios({
     method: 'get',
-    url: BASE_URL+ '/node',
+    url: BASE_URL + '/node',
     headers: {
       'Authorization': decrypt(sessionStorage.getItem("token"))
     }
@@ -101,7 +101,7 @@ export const reqMachineInfo = () => {
 export const reqAllSensorInfo = (data: any) => {
   let promise = axios({
     method: 'get',
-    url: BASE_URL+ '/sensor/infos',
+    url: BASE_URL + '/sensor/infos',
     headers: {
       'Authorization': decrypt(sessionStorage.getItem("token"))
     },
@@ -123,7 +123,7 @@ export const reqAllSensorInfo = (data: any) => {
 export const reqSensorData = (data: any) => {
   let promise = axios({
     method: 'get',
-    url: BASE_URL+ '/sensor/data',
+    url: BASE_URL + '/sensor/data',
     headers: {
       'Authorization': decrypt(sessionStorage.getItem("token"))
     },
@@ -145,7 +145,7 @@ export const reqSensorData = (data: any) => {
 export const reqAllUWBInfo = (data: any) => {
   let promise = axios({
     method: 'get',
-    url: BASE_URL+ '/uwb/datas',
+    url: BASE_URL + '/uwb/datas',
     headers: {
       'Authorization': decrypt(sessionStorage.getItem("token"))
     },
@@ -167,7 +167,7 @@ export const reqAllUWBInfo = (data: any) => {
 export const reqUWBData = (data: any) => {
   let promise = axios({
     method: 'get',
-    url: BASE_URL+ '/uwb/userdata',
+    url: BASE_URL + '/uwb/userdata',
     headers: {
       'Authorization': decrypt(sessionStorage.getItem("token"))
     },
@@ -185,6 +185,27 @@ export const reqUWBData = (data: any) => {
   })
 }
 
+// 获取IP
+export const reqIP = () => {
+  let promise = axios({
+    method: 'get',
+    url: BASE_URL + '/ip',
+    headers: {
+      'Authorization': decrypt(sessionStorage.getItem("token")),
+      'Content-Type': 'application/json; charset=UTF-8'
+    }
+  })
+
+  return new Promise<any>(function (resolve, reject) {
+    promise.then(function (response) {
+      // 成功了调用resolve()
+      resolve(response)
+    }).catch(function (error) {
+      //失败了调用reject()
+      reject(error)
+    })
+  })
+}
 
 // 获取天气
 export const reqWeatherInfo = (data: any) => {

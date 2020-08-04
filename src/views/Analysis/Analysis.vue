@@ -511,7 +511,6 @@ export default class Analysis extends Vue {
     }
     await this.$store.dispatch('getSensorData', data)
     let sensorData: any = this.$store.state.sensorData
-    console.log(sensorData)
     if (sensorData.code && sensorData.code === -1) {
       this.hasData = false
       return 

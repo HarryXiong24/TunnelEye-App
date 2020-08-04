@@ -191,6 +191,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import { reqIP } from '../../api/index';
 import carouselImg1 from './img/1.jpg';
 import carouselImg2 from './img/2.jpg';
 import carouselImg3 from './img/3.jpg';
@@ -221,24 +222,29 @@ export default class Warning extends Vue {
   }
 
   async getWeather () {
-    let IPINfo = JSON.parse(sessionStorage.getItem('location')!)
-    let data = {city: IPINfo.city}
-    await this.$store.dispatch('getWeatherInfo', data)
-    let weatherInfo = this.$store.state.weatherInfo 
-    if (weatherInfo && weatherInfo.status === 1000) {
-      this.weatherData.has = true
-      let data = weatherInfo.data
-      this.weatherData.city = data.city
-      this.weatherData.type = data.forecast[0].type
+    let IPInfo = await reqIP()
+    if (IPInfo && IPInfo.status === 200) {
+      let city = IPInfo.data.cityInfo.split("-")[2]
+      let data = {city: city}
+      await this.$store.dispatch('getWeatherInfo', data)
+      let weatherInfo = this.$store.state.weatherInfo 
+      if (weatherInfo && weatherInfo.status === 1000) {
+        this.weatherData.has = true
+        let data = weatherInfo.data
+        this.weatherData.city = data.city
+        this.weatherData.type = data.forecast[0].type
 
-      // 计算风力
-      let windRank = data.forecast[0].fengli.match(/\d/)
+        // 计算风力
+        let windRank = data.forecast[0].fengli.match(/\d/)
 
-      this.weatherData.windPower = data.forecast[0].fengxiang + windRank + '级'
-      this.weatherData.average = '平均 ' + data.wendu + '℃'
-      this.weatherData.low = data.forecast[0].low
-      this.weatherData.high = data.forecast[0].high
+        this.weatherData.windPower = data.forecast[0].fengxiang + windRank + '级'
+        this.weatherData.average = '平均 ' + data.wendu + '℃'
+        this.weatherData.low = data.forecast[0].low
+        this.weatherData.high = data.forecast[0].high
 
+      } else {
+        this.weatherData.has = false
+      }
     } else {
       this.weatherData.has = false
     }
