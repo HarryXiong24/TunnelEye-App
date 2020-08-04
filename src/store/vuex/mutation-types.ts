@@ -20,6 +20,10 @@ export const RECEIVE_ALLUWBINFO = 'receive_allUWBInfo'
 export const RECEIVE_UWBDATA = 'receive_UWBData'
 // 接受天气信息
 export const RECEIVE_WEATHERINFO = 'receive_weatherInfo'
+// 接受预警信息列表
+export const RECEIVE_MESSAGELISTS = 'receive_messageLists'
+// 接受预警信息正文
+export const RECEIVE_MESSAGECONTENT = 'receive_messageContent'
 
 
 

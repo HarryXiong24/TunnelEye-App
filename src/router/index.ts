@@ -7,6 +7,7 @@ const UserInfo = () => import("../views/UserInfo/UserInfo.vue");
 const PersonInfo = () => import("../views/PersonInfo/PersonInfo.vue");
 const Warning = () => import("../views/Warning/Warning.vue");
 const Analysis = () => import("../views/Analysis/Analysis.vue");
+const MessageContent = () => import("../views/MessageContent/MessageContent.vue");
 
 Vue.use(VueRouter);
 
@@ -26,6 +27,11 @@ const routes: Array<RouteConfig> = [
     path: '/UserInfo',
     component: UserInfo,
     meta: { title: 'UserInfo', requiresAuth: true }
+  },
+  {
+    path: '/MessageContent',
+    component: MessageContent,
+    meta: { title: 'MessageContent', requiresAuth: true }
   },
   {
     path: '/Init',
@@ -52,7 +58,7 @@ const routes: Array<RouteConfig> = [
       {
         path: '/Init/Warning',
         component: Warning,
-        meta: { title: 'Warning', requiresAuth: true }
+        meta: { title: 'Warning', requiresAuth: true },
       }
     ]
   },

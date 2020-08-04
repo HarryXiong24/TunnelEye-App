@@ -8,4 +8,6 @@ export interface State {
   allUWBInfo: {}
   UWBData: {}
   weatherInfo: {}
+  messageLists: {}
+  messageContent: {}
 }

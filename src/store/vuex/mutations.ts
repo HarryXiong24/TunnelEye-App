@@ -11,6 +11,8 @@ import {
   RECEIVE_ALLUWBINFO,
   RECEIVE_UWBDATA,
   RECEIVE_WEATHERINFO,
+  RECEIVE_MESSAGELISTS,
+  RECEIVE_MESSAGECONTENT,
 } from './mutation-types'
 
 export default {
@@ -40,5 +42,11 @@ export default {
   },
   [RECEIVE_WEATHERINFO] (state: State, {weatherInfo}: any) {
     state.weatherInfo = weatherInfo
-  }
+  },
+  [RECEIVE_MESSAGELISTS] (state: State, {messageLists}: any) {
+    state.messageLists = messageLists
+  },
+  [RECEIVE_MESSAGECONTENT] (state: State, {messageContent}: any) {
+    state.messageContent = messageContent
+  },
 }

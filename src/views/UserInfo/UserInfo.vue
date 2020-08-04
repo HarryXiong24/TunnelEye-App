@@ -1,13 +1,6 @@
 <template>
   <div class="userInfo">
-    <mu-appbar style="width: 100%;" color="#1a1a1a" class="topBar">
-      <mu-menu slot="left">
-        <mu-button icon class="icon" @click="back">
-          <mu-icon value="keyboard_arrow_left"></mu-icon>
-        </mu-button>
-      </mu-menu>
-      <div class="title">用户信息</div>
-    </mu-appbar>
+    <FunctionTop title="账户信息"></FunctionTop>
 
     <mu-list>
       <mu-list-item button :ripple="true" class="item">
@@ -71,10 +64,15 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { decrypt } from '../../util/crypto';
+import FunctionTop from '../../components/FunctionTop/FunctionTop.vue';
 
-@Component
+@Component({
+  components: {
+    FunctionTop
+  }
+})
 export default class UserInfo extends Vue {
   private userInfo: {} = {}
 
@@ -91,23 +89,10 @@ export default class UserInfo extends Vue {
 
 <style lang="scss">
 .userInfo{
-  .topBar {
-    .title {
-      font-size: 70px;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-    }
-    .icon {
-      margin-top: 20px;
-    }
-  }
-
   .item {
     .id {
       text-align: end;
     }
   }
-
 }
 </style>

@@ -42,7 +42,7 @@
       </mu-alert>
     </mu-row> 
 
-    <p class="title">预警信息</p>
+    <p class="title">安全手册</p>
 
     <mu-row>
       <mu-col span="12" lg="4" sm="6">
@@ -69,7 +69,8 @@
       </mu-col>
     </mu-row>
 
-    
+    <p class="title">预警信息</p>
+
     <mu-row class="hint">
       <mu-sub-header class="subHeader">预警程度</mu-sub-header>
       <mu-chip class="demo-chip" color="#4caf50">
@@ -83,106 +84,47 @@
       </mu-chip> 
     </mu-row>
 
-    <mu-row class="listWrap">
-      <mu-col span="12" lg="4" sm="6">
 
-        <mu-divider></mu-divider>
+    <mu-tabs :value.sync="sync" inverse color="secondary" text-color="rgba(0, 0, 0, .54)" center full-width>
+      <mu-tab @click="changeTab">消息预警</mu-tab>
+      <mu-tab @click="changeTab">传感器预警</mu-tab>
+    </mu-tabs>
+
+    <mu-row class="listWrap" v-if="sync === 0">
+      <mu-col span="12" lg="4" sm="6">
 
         <mu-list textline="two-line" class="list">
           <mu-sub-header class="subHeader">消息预警</mu-sub-header>
           
-          <mu-list-item avatar button :ripple="false">
-            <mu-list-item-action>
-              <mu-avatar color="#f44336">
-                <mu-icon value="warning"></mu-icon>
-              </mu-avatar>
-            </mu-list-item-action>
-            <mu-list-item-content>
-              <mu-list-item-title>大雨容易出现山体滑坡</mu-list-item-title>
-              <mu-list-item-sub-title>2014-06-18</mu-list-item-sub-title>
-            </mu-list-item-content>
-            <mu-list-item-action>
-              <mu-button icon>
-                <mu-icon value="info"></mu-icon>
-              </mu-button>
-            </mu-list-item-action>
-          </mu-list-item>
+          <MessageList v-for="(list, index) in lists" :key=index :list="list"></MessageList>
 
-          <mu-list-item avatar button :ripple="false">
-            <mu-list-item-action>
-              <mu-avatar color="#4caf50">
-                <mu-icon value="check_circle"></mu-icon>
-              </mu-avatar>
-            </mu-list-item-action>
-            <mu-list-item-content>
-              <mu-list-item-title>高气温预警，预计达40摄氏度</mu-list-item-title>
-              <mu-list-item-sub-title>2020-06-14</mu-list-item-sub-title>
-            </mu-list-item-content>
-            <mu-list-item-action>
-              <mu-button icon>
-                <mu-icon value="info"></mu-icon>
-              </mu-button>
-            </mu-list-item-action>
-          </mu-list-item>
-
-          <mu-list-item avatar button :ripple="false">
-            <mu-list-item-action>
-              <mu-avatar color="#ffca28">
-                <mu-icon value="priority_high"></mu-icon>
-              </mu-avatar>
-            </mu-list-item-action>
-            <mu-list-item-content>
-              <mu-list-item-title>受气流影响，大风近期来临</mu-list-item-title>
-              <mu-list-item-sub-title>2018-06-01</mu-list-item-sub-title>
-            </mu-list-item-content>
-            <mu-list-item-action>
-              <mu-button icon>
-                <mu-icon value="info"></mu-icon>
-              </mu-button>
-            </mu-list-item-action>
-          </mu-list-item>
         </mu-list>
 
-        <mu-divider></mu-divider>
+        <mu-container>
+          <mu-flex justify-content="center">
+            <mu-pagination :page-size="pageSize" raised circle :total="total" :current.sync="current" @change="changePage"></mu-pagination>
+          </mu-flex>
+        </mu-container>
+
+      </mu-col>
+    </mu-row>
+
+    <mu-row class="listWrap" v-if="sync === 1">
+      <mu-col span="12" lg="4" sm="6">
 
         <mu-list textline="two-line" class="list">
           <mu-sub-header class="subHeader">传感器预警</mu-sub-header>
           
-          <mu-list-item avatar button :ripple="false">
-            <mu-list-item-action>
-              <mu-avatar color="#f44336">
-                <mu-icon value="warning"></mu-icon>
-              </mu-avatar>
-            </mu-list-item-action>
-            <mu-list-item-content>
-              <mu-list-item-title>隧道内一氧化碳浓度过高</mu-list-item-title>
-              <mu-list-item-sub-title>2020-06-18</mu-list-item-sub-title>
-            </mu-list-item-content>
-            <mu-list-item-action>
-              <mu-button icon>
-                <mu-icon value="info"></mu-icon>
-              </mu-button>
-            </mu-list-item-action>
-          </mu-list-item>
-          
-          <mu-list-item avatar button :ripple="false">
-            <mu-list-item-action>
-              <mu-avatar color="#ffca28">
-                <mu-icon value="priority_high"></mu-icon>
-              </mu-avatar>
-            </mu-list-item-action>
-            <mu-list-item-content>
-              <mu-list-item-title>隧道内氧气含量开始减少</mu-list-item-title>
-              <mu-list-item-sub-title>2020-06-18</mu-list-item-sub-title>
-            </mu-list-item-content>
-            <mu-list-item-action>
-              <mu-button icon>
-                <mu-icon value="info"></mu-icon>
-              </mu-button>
-            </mu-list-item-action>
-          </mu-list-item>
+          <MessageList v-for="(list, index) in lists" :key=index :list="list"></MessageList>
 
         </mu-list>
+
+        <mu-container>
+          <mu-flex justify-content="center">
+            <mu-pagination :page-size="pageSize" raised circle :total="total" :current.sync="current" @change="changePage"></mu-pagination>
+          </mu-flex>
+        </mu-container>
+
       </mu-col>
     </mu-row>
 
@@ -192,13 +134,21 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import { reqIP } from '../../api/index';
+import MessageList from '../../components/MessageList/MessageList.vue';
+import moment from 'moment';
 import carouselImg1 from './img/1.jpg';
 import carouselImg2 from './img/2.jpg';
 import carouselImg3 from './img/3.jpg';
 
-@Component
+@Component({
+  components: {
+    MessageList
+  }
+})
 export default class Warning extends Vue {
-  private active: number = 0
+  // 轮播图的切换
+  public active: number = 0
+  // 天气数据
   public weatherData = {
     has: false,
     city: '',
@@ -208,6 +158,16 @@ export default class Warning extends Vue {
     high: '',
     low: '',
   }
+  // 消息类型切换
+  public sync: number = 0
+  // 当前页码
+  public current: number = 1
+  // 页码总数
+  public total: number = 1
+  // 每页数量
+  public pageSize: number = 10
+  // 信息列表
+  public lists: Array<any> = []
 
   data() {
     return {
@@ -221,7 +181,7 @@ export default class Warning extends Vue {
     this.active = index;
   }
 
-  async getWeather () {
+  async getWeather() {
     let IPInfo = await reqIP()
     if (IPInfo && IPInfo.status === 200) {
       let city = IPInfo.data.cityInfo.split("-")[2]
@@ -250,11 +210,66 @@ export default class Warning extends Vue {
     }
   }
 
-  async mounted() {
-    await this.getWeather()
+  async getMessageLists() {
+    // 定义参数
+    let data: any = {}
+    // 判断预警种类
+    if (this.sync === 0) {
+      data = {
+        limit: 6,
+        page: this.current,
+        type: 0
+      }
+    } else if (this.sync === 1) {
+      data = {
+        limit: 6,
+        page: this.current,
+        type: 1
+      }
+    }
+
+    await this.$store.dispatch('getMessageLists', data)
+    let messageLists = this.$store.state.messageLists
+    this.total = messageLists.count
+    this.lists = messageLists.data
+    this.pageSize = data.limit
+    console.log(this.total)
+    console.log(this.lists)
   }
 
+  async changePage() {
+    // 定义参数
+    let data: any = {}
+    // 判断预警种类
+    if (this.sync === 0) {
+      data = {
+        limit: 6,
+        page: this.current,
+        type: 0
+      }
+    } else if (this.sync === 1) {
+      data = {
+        limit: 6,
+        page: this.current,
+        type: 1
+      }
+    }
 
+    await this.$store.dispatch('getMessageLists', data)
+    let messageLists = this.$store.state.messageLists
+    this.lists = messageLists.data
+    this.pageSize = data.limit
+    console.log(this.lists)
+  }
+
+  async mounted() {
+    await this.getWeather()
+    await this.getMessageLists()
+  }
+
+  async changeTab() {
+    await this.getMessageLists()
+  }
 }
 
 </script>
@@ -331,9 +346,5 @@ export default class Warning extends Vue {
         }
       }
     }
-
-  // 普通 #4caf50 check_circle
-  // 警告 #ffca28 priority_high
-  // 严重 #f44336 warning
   }
 </style>

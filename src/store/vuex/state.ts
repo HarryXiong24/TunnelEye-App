@@ -11,6 +11,8 @@ const state: State = {
   allUWBInfo: {},
   UWBData: {},
   weatherInfo: {},
+  messageLists: {},
+  messageContent: {}
 }
 
 export default state

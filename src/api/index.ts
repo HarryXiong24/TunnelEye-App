@@ -229,6 +229,52 @@ export const reqWeatherInfo = (data: any) => {
   })
 }
 
+// 获取预警信息列表
+export const reqMessageLists = (data: any) => {
+  let promise = axios({
+    method: 'get',
+    url: BASE_URL + '/infos',
+    headers: {
+      'Authorization': decrypt(sessionStorage.getItem("token")),
+      'Content-Type': 'application/json; charset=UTF-8'
+    },
+    params: data
+  })
+
+  return new Promise<any>(function (resolve, reject) {
+    promise.then(function (response) {
+      // 成功了调用resolve()
+      resolve(response)
+    }).catch(function (error) {
+      //失败了调用reject()
+      reject(error)
+    })
+  })
+}
+
+// 获取预警信息正文
+export const reqMessageContent = (data: any) => {
+  let promise = axios({
+    method: 'get',
+    url: BASE_URL + '/info',
+    headers: {
+      'Authorization': decrypt(sessionStorage.getItem("token")),
+      'Content-Type': 'application/json; charset=UTF-8'
+    },
+    params: data
+  })
+
+  return new Promise<any>(function (resolve, reject) {
+    promise.then(function (response) {
+      // 成功了调用resolve()
+      resolve(response)
+    }).catch(function (error) {
+      //失败了调用reject()
+      reject(error)
+    })
+  })
+}
+
 // // 1、根据经纬度获取位置详情
 // export const reqAddress = (geohash) => ajax(`${BASE_URL}/position/${geohash}`)
 // // 2、获取食品分类列表

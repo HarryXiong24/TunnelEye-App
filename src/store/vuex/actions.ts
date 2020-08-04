@@ -11,6 +11,8 @@ import {
   RECEIVE_ALLUWBINFO,
   RECEIVE_UWBDATA,
   RECEIVE_WEATHERINFO,
+  RECEIVE_MESSAGELISTS,
+  RECEIVE_MESSAGECONTENT,
 } from './mutation-types'
 
 import {
@@ -23,6 +25,8 @@ import {
   reqAllUWBInfo,
   reqUWBData,
   reqWeatherInfo,
+  reqMessageLists,
+  reqMessageContent,
 } from '../../api/index'
 
 export default {
@@ -110,7 +114,27 @@ export default {
     // 提交一个mutation
     const weatherInfo = result.data
     commit(RECEIVE_WEATHERINFO, {weatherInfo})
+  },
+
+  // 异步获取预警消息列表
+  async getMessageLists({commit}: any, data: any) {
+    // 发送异步ajax请求
+    const result = await reqMessageLists(data)
+    // 提交一个mutation
+    const messageLists = result.data
+    commit(RECEIVE_MESSAGELISTS, {messageLists})
+  },
+
+  // 异步获取预警消息正文
+  async getMessageContent({commit}: any, data: any) {
+    // 发送异步ajax请求
+    const result = await reqMessageContent(data)
+    // 提交一个mutation
+    const messageContent = result.data
+    commit(RECEIVE_MESSAGECONTENT, {messageContent})
   }
+
+
 
 
   // // 异步获取食品分类列表

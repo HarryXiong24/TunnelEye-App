@@ -1,21 +1,9 @@
 <template>
   <mu-appbar style="width: 100%;" color="#1a1a1a" class="topBar">
     <mu-menu slot="left">
-      <mu-button icon class="icon">
-        <mu-icon value="home"></mu-icon>
+      <mu-button icon class="icon" @click="back">
+        <mu-icon value="keyboard_arrow_left"></mu-icon>
       </mu-button>
-      <mu-list slot="content">
-        <mu-list-item button @click="goUserInfo">
-          <mu-list-item-content>
-            <mu-list-item-title>账号信息</mu-list-item-title>
-          </mu-list-item-content>
-        </mu-list-item>
-        <mu-list-item button @click="logout">
-          <mu-list-item-content>
-            <mu-list-item-title>退出登录</mu-list-item-title>
-          </mu-list-item-content>
-        </mu-list-item>
-      </mu-list>
     </mu-menu>
     <div slot="default" class="title">
       <div>{{title}}</div>
@@ -29,18 +17,14 @@ import { Prop, Component, Vue } from 'vue-property-decorator';
 import moment from 'moment';
 
 @Component
-export default class HeadTop extends Vue {
+export default class FunctionTop extends Vue {
   @Prop(String) private title!: string
   private time: string = ''
+  private value: string = ''
+  private open: boolean = false
 
-  logout(): void {
-    sessionStorage.removeItem('token')
-    sessionStorage.removeItem('userInfo')
-    this.$router.push('/')
-  }
-  
-  goUserInfo(): void {
-    this.$router.push('/UserInfo')
+  back () {
+    this.$router.back()
   }
 
   mounted () {
