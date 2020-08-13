@@ -61,8 +61,6 @@ export default class MessageContent extends Vue {
 
     await this.$store.dispatch('getMessageContent', data)
     this.messageContent = this.$store.state.messageContent
-
-    console.log(this.messageContent)
   } 
 
   async mounted() {

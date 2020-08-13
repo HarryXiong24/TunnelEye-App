@@ -233,8 +233,6 @@ export default class Warning extends Vue {
     this.total = messageLists.count
     this.lists = messageLists.data
     this.pageSize = data.limit
-    console.log(this.total)
-    console.log(this.lists)
   }
 
   async changePage() {

@@ -277,6 +277,8 @@ export default class Location extends Vue {
     await this.initAllUWBInfo()
     await this.getUWBData()
 
+    await this.$store.dispatch('getMapData')
+    console.log(this.$store.state.mapData)
     this.drawBoundary()
       
     // 刷新时间

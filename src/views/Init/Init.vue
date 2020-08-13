@@ -3,21 +3,19 @@
     <!-- Init页面应该控制不同位置的显示 -->
     <HeadTop :title="headTitle">
     </HeadTop>
-    <router-view/>
+    <div>
+      <router-view/>
+    </div>
     <!-- 占位用 -->
     <div class="bottom"></div>
-    <mu-row justify-content="center">
+    <mu-row justify-content="center" class="footerGuide">
       <mu-col span="12">
-        <mu-row class="footerGuide">
-          <mu-col span="12">
-            <mu-bottom-nav :value.sync="shift" ripple color="amber800" @change="getHead">
-              <mu-bottom-nav-item value="Location" title="人员定位" icon="accessibility_new" to="/Init/Location" replace></mu-bottom-nav-item>
-              <mu-bottom-nav-item value="PersonInfo" title="出勤信息" icon="assignment" to="/Init/PersonInfo" replace></mu-bottom-nav-item>
-              <mu-bottom-nav-item value="Analysis" title="环境监测" icon="assessment" to="/Init/Analysis" replace></mu-bottom-nav-item>
-              <mu-bottom-nav-item value="Warning" title="预警信息" icon="info" to="/Init/Warning" replace></mu-bottom-nav-item>
-            </mu-bottom-nav>
-          </mu-col>
-      </mu-row>
+        <mu-bottom-nav :value.sync="shift" ripple color="amber800" @change="getHead">
+          <mu-bottom-nav-item value="Location" title="人员定位" icon="accessibility_new" to="/Init/Location" replace></mu-bottom-nav-item>
+          <mu-bottom-nav-item value="PersonInfo" title="出勤信息" icon="assignment" to="/Init/PersonInfo" replace></mu-bottom-nav-item>
+          <mu-bottom-nav-item value="Analysis" title="环境监测" icon="assessment" to="/Init/Analysis" replace></mu-bottom-nav-item>
+          <mu-bottom-nav-item value="Warning" title="预警信息" icon="info" to="/Init/Warning" replace></mu-bottom-nav-item>
+        </mu-bottom-nav>
       </mu-col>
     </mu-row>
   </div>
@@ -49,7 +47,8 @@ export default class Init extends Vue {
   }
 
   async redirectTab() {
-    this.shift = this.$route.path.split("/")[2]
+    let values = this.$route.path.split("/")
+    this.shift = this.$route.path.split("/")[values.length - 1]
     this.getHead()
   }
 
@@ -65,7 +64,7 @@ export default class Init extends Vue {
     .bottom {
       width: 100%;
       height: 300px;
-      background: white;
+      background: #fafafa;
       z-index: 0;
     }
     .footerGuide {

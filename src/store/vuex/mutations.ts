@@ -13,6 +13,7 @@ import {
   RECEIVE_WEATHERINFO,
   RECEIVE_MESSAGELISTS,
   RECEIVE_MESSAGECONTENT,
+  RECEIVE_MAPDATA,
 } from './mutation-types'
 
 export default {
@@ -48,5 +49,8 @@ export default {
   },
   [RECEIVE_MESSAGECONTENT] (state: State, {messageContent}: any) {
     state.messageContent = messageContent
+  },
+  [RECEIVE_MAPDATA] (state: State, {mapData}: any) {
+    state.mapData = mapData
   },
 }

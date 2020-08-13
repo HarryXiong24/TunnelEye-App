@@ -12,7 +12,8 @@ const state: State = {
   UWBData: {},
   weatherInfo: {},
   messageLists: {},
-  messageContent: {}
+  messageContent: {},
+  mapData: {},
 }
 
 export default state
