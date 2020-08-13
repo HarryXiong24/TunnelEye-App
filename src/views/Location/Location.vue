@@ -30,7 +30,7 @@
 
       <mu-row>
         <mu-col span="12" id="#svg">
-          <svg viewBox="0 0 1300 1300" preserveAspectRatio="xMidYMid slice">
+          <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
           </svg>
           <mu-button icon color="red" class="update">
             <mu-icon value="autorenew"></mu-icon>
@@ -120,9 +120,9 @@
 
 <script lang="ts">
 import * as d3 from 'd3';
-import moment from 'moment'
+import moment from 'moment';
 import { Vue, Component } from 'vue-property-decorator';
-import scale from '../../util/scale';
+import { scale, filter, findMax } from '../../util/scale';
 
 // 生成从minNum到maxNum的随机数
 function randomNum(minNum: number, maxNum: number) {
@@ -145,8 +145,11 @@ export default class Location extends Vue {
   public active: number = 0;
 
   // 平面图信息
-  public coorGroups: Array<any>[] = []
-  public ploygon: Array<any> = []
+  public coorGroups: Array<any>[] = []       // 多个多边形坐标集合
+  public scaleMaxSet: Array<any> = []        // 各组多边形最大坐标集合
+  public ploygon: Array<any> = []            // 当前显示的多边形坐标
+  public scaleMax: number = 0                // 当前多边形最大坐标集合
+  public uwbBaseCoor: Array<any> = []        // 基站位置
 
   // 获取下位机，选地点的参数
   public machineAdd: Array<any> = []
@@ -207,16 +210,22 @@ export default class Location extends Vue {
     console.log(this.$store.state.UWBData)
   }
 
-  // 获取平面图信息
+  // 获取平面图信息，并处理数据
   async getMapData () {
     await this.$store.dispatch('getMapData', {sysId: 1})
     let mapData = this.$store.state.mapData
     console.log(mapData)
     
-    console.log(scale(2000, 2000, 1000))
     // 测试 
-    this.coorGroups.push([[0,0],[1024,0],[1024,728],[900,455]])
-    this.coorGroups.push([[0,0],[0,728],[1024,728],[1300,400]])
+    this.coorGroups.push(filter([[100,40],[10,290],[100,560],[500,560],[590,290],[500,40]], 600))
+    this.coorGroups.push(filter([[0,0],[1024,0],[1024,728],[900,455]], 600))
+    this.coorGroups.push(filter([[0,0],[0,728],[1024,728],[1300,400]], 600))
+
+    this.scaleMaxSet.push(findMax([[100,40],[10,290],[100,560],[500,560],[590,290],[500,40]]))
+    this.scaleMaxSet.push(findMax([[0,0],[1024,0],[1024,728],[900,455]]))
+    this.scaleMaxSet.push(findMax([[0,0],[0,728],[1024,728],[1300,400]]))
+
+    this.uwbBaseCoor = mapData.uwbBaseCoor
   }
 
   // 画边界
@@ -229,11 +238,28 @@ export default class Location extends Vue {
 
     d3.select('svg').append('polygon')
     .attr("points", hull)
-    .attr("fill", "pink")
+    .attr("fill", "#ffc2cc5c")
     .attr("stroke", "black")
-    .attr("stroke-width", 1)
+    .attr("stroke-width", 2)
   }
 
+  // 画基站监测点
+  drawUWBBase () {
+    this.scaleMax = this.scaleMaxSet[this.active]
+    let svg = d3.select("svg")
+    console.log(this.scaleMax)
+    // 先清空以前的点
+    svg.selectAll('rect').remove()
+
+    this.uwbBaseCoor.forEach( (val) => {
+      svg.append('rect')
+      .attr("x", scale(val.xcoor, this.scaleMax, 600))
+      .attr("y", scale(val.ycoor, this.scaleMax, 600))
+      .attr("height", 12)
+      .attr("width", 12)
+      .attr("fill", "orange")
+    })
+  }
 
   // 根据地点，获取nodeID 
   judgeNodeID () {
@@ -256,6 +282,7 @@ export default class Location extends Vue {
   changeTab (index: number) {
     this.active = index
     this.drawBoundary()
+    this.drawUWBBase()
   }
 
 
@@ -320,6 +347,7 @@ export default class Location extends Vue {
 
     await this.getMapData()
     this.drawBoundary()
+    this.drawUWBBase()
       
     // 刷新时间
     setInterval( () => {
