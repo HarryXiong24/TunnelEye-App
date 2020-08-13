@@ -22,31 +22,25 @@
         </div>
       </div>
 
-      <mu-row class="tabs">
-        <mu-tabs :value.sync="active" inverse full-width color="secondary" text-color="rgba(0, 0, 0, .54)"  center>
-          <mu-tab @click="changeTab(index)" v-for="(value, index) in coorGroups" :key="index">场景{{index+1}}</mu-tab>
-        </mu-tabs>
-      </mu-row>
-
       <mu-row>
-        <mu-col span="12" id="#svg">
+        <mu-col span="12" id="svg">
           <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
           </svg>
-          <mu-button icon color="red" class="update">
-            <mu-icon value="autorenew"></mu-icon>
-          </mu-button>
         </mu-col>
       </mu-row>
 
       <mu-row gutter justify-content="center">
-        <mu-col span="6">
+        <mu-col span="12">
           <p class="text">项目地点平面示意图</p>
         </mu-col>
       </mu-row>
 
       <mu-row gutter justify-content="center">
-        <mu-col span="6">
+        <mu-col span="12">
           <p class="text">上位机状态: 在线</p>
+          <mu-button icon color="red" class="update">
+            <mu-icon value="autorenew"></mu-icon>
+          </mu-button>
         </mu-col>
       </mu-row>
 
@@ -141,36 +135,32 @@ function randomNum(minNum: number, maxNum: number) {
 
 @Component
 export default class Location extends Vue {
-  // tab标签切换
-  public active: number = 0;
-
-  // 平面图信息
-  public coorGroups: Array<any>[] = []       // 多个多边形坐标集合
-  public scaleMaxSet: Array<any> = []        // 各组多边形最大坐标集合
-  public ploygon: Array<any> = []            // 当前显示的多边形坐标
-  public scaleMax: number = 0                // 当前多边形最大坐标集合
-  public uwbBaseCoor: Array<any> = []        // 基站位置
-
   // 获取下位机，选地点的参数
   public machineAdd: Array<any> = []
   public nowAddress: Array<any> = []
   public open = false
   public trigger = null
 
-  // 获取所有UWB标签信息
-  public nodeID = 0
+  // 平面图信息
+  public coorGroups: Array<any>[] = []       // 多个多边形坐标集合
+  public scaleMaxSet: Array<any> = []        // 各组多边形最大坐标集合
+  public scaleMax: number = 0                // 当前多边形最大坐标集合
+  public uwbBaseCoor: Array<any> = []        // 基站位置
 
-  public cx = 0
-  public cy =0
-  public hull = d3.polygonHull([ [100,40], [10,290], [100,560], [500,560], [590,290], [500,40] ])
-  public count = 5
-  public second = 3
-  public id = "未选择人员"
-  public name = "未选择人员"
-  public sex = "未选择人员"
-  public position = "未选择人员"
-  public time = "无"
-  public nowTime = ""
+  // 获取所有UWB标签信息
+  public nodeID: number = 0
+  public allUWBInfo: Array<any> = []
+
+  // 当前存在的人员信息
+  public cx: number = 0
+  public cy: number = 0
+  public second: number = 10
+  public id: string = "未选择人员"
+  public name: string = "未选择人员"
+  public sex: string = "未选择人员"
+  public position: string = "未选择人员"
+  public time: string = "无"
+  public nowTime: string = ""
 
   // 获取下位机地址
   async initMachineInfo () {
@@ -193,12 +183,13 @@ export default class Location extends Vue {
       sysId: 1,
     }
 
-    await this.$store.dispatch('getAllUWBInfo', data);
-    console.log(this.$store.state.allUWBInfo)
+    await this.$store.dispatch('getAllUWBInfo', data)
+    this.allUWBInfo = this.$store.state.allUWBInfo.data
+    console.log(this.allUWBInfo)
   }
 
   // 获取指定UWB数据
-  async getUWBData () {
+  async getUWBData (labelAdd: number) {
     this.nodeID = this.judgeNodeID()
     let data = {
       nodeId: this.nodeID,
@@ -207,22 +198,22 @@ export default class Location extends Vue {
     }
 
     await this.$store.dispatch('getUWBData', data);
-    console.log(this.$store.state.UWBData)
+    let UWBData = this.$store.state.UWBData
+    this.id = UWBData.userid
+    this.name = UWBData.userName
+    this.time = moment().format('HH:mm:ss')
   }
 
   // 获取平面图信息，并处理数据
   async getMapData () {
     await this.$store.dispatch('getMapData', {sysId: 1})
     let mapData = this.$store.state.mapData
-    console.log(mapData)
     
     // 测试 
-    this.coorGroups.push(filter([[100,40],[10,290],[100,560],[500,560],[590,290],[500,40]], 600))
-    this.coorGroups.push(filter([[0,0],[1024,0],[1024,728],[900,455]], 600))
+    this.coorGroups.push(filter([[0,0],[1024,0],[1024,728],[1000,1255]], 600))
     this.coorGroups.push(filter([[0,0],[0,728],[1024,728],[1300,400]], 600))
 
-    this.scaleMaxSet.push(findMax([[100,40],[10,290],[100,560],[500,560],[590,290],[500,40]]))
-    this.scaleMaxSet.push(findMax([[0,0],[1024,0],[1024,728],[900,455]]))
+    this.scaleMaxSet.push(findMax([[0,0],[1024,0],[1024,728],[1000,1255]]))
     this.scaleMaxSet.push(findMax([[0,0],[0,728],[1024,728],[1300,400]]))
 
     this.uwbBaseCoor = mapData.uwbBaseCoor
@@ -230,24 +221,24 @@ export default class Location extends Vue {
 
   // 画边界
   drawBoundary () {
-    this.ploygon = this.coorGroups[this.active]
-    let hull = d3.polygonHull(this.ploygon)
-    
     // 移除svg内部节点
     d3.selectAll("svg > *").remove()
 
-    d3.select('svg').append('polygon')
-    .attr("points", hull)
-    .attr("fill", "#ffc2cc5c")
-    .attr("stroke", "black")
-    .attr("stroke-width", 2)
+    this.coorGroups.forEach( (val) => {
+      let hull = d3.polygonHull(val)
+
+      d3.select('svg').append('polygon')
+      .attr("points", hull)
+      .attr("fill", "#ffc2cc5c")
+      .attr("stroke", "black")
+      .attr("stroke-width", 2)
+    })
   }
 
   // 画基站监测点
   drawUWBBase () {
-    this.scaleMax = this.scaleMaxSet[this.active]
+    this.findMax()
     let svg = d3.select("svg")
-    console.log(this.scaleMax)
     // 先清空以前的点
     svg.selectAll('rect').remove()
 
@@ -259,6 +250,66 @@ export default class Location extends Vue {
       .attr("width", 12)
       .attr("fill", "orange")
     })
+  }
+
+  // 画点
+  drawPoint (svg: any) {
+    // 先清空以前的点
+    svg.selectAll('circle').remove()
+    svg.selectAll('text').remove()
+
+    // 建立循环，同时画几个点
+    for (let i = 0; i < this.allUWBInfo.length; i++) {
+      let cx = Math.floor(scale(this.allUWBInfo[i].xcoor, this.scaleMax, 600))
+      let cy = Math.floor(scale(this.allUWBInfo[i].ycoor, this.scaleMax, 600))
+      let labelAdd = this.allUWBInfo[i].labelAdd
+      console.log(labelAdd)
+      let that = this
+      // 添加点
+      svg.append('circle')
+      .attr("cx", cx)
+      .attr("cy", cy)
+      .attr("r", 10)
+      .attr("fill", "red")
+      .on("click", async function (this: any, d: any, i: any) {
+        await that.getUWBData(labelAdd)
+        that.position = `(${cx},${cy})`
+        d3.select(this) 
+        .attr("r", 12)
+        .attr("fill","#aa00ff")
+      })
+
+      // 点旁边添加序号
+      svg.append('text')
+      .attr("x", cx-10)
+      .attr("y", cy-10)
+      .attr("fill", "black")
+      .text(labelAdd)
+    }
+  }
+
+  async mounted () {
+    this.trigger = (this.$refs.button as any).$el 
+    await this.initMachineInfo()
+    this.nowAddress = this.machineAdd[0]
+
+    await this.getMapData()
+    this.drawBoundary()
+    this.drawUWBBase()
+      
+    // 刷新时间
+    setInterval( () => {
+      this.nowTime = moment().format('YYYY-MM-DD HH:mm:ss')
+    }, 10);
+
+    // 选择svg画布
+    let svg = d3.select("svg")
+
+    let timer = setInterval( async () => {
+      // 每隔一段时间获取所有UWB标签信息
+      await this.initAllUWBInfo()
+      this.drawPoint(svg)
+    }, this.second * 1000)
   }
 
   // 根据地点，获取nodeID 
@@ -278,88 +329,16 @@ export default class Location extends Vue {
     this.open = false
   }
 
-  // 切换平面图场景
-  changeTab (index: number) {
-    this.active = index
-    this.drawBoundary()
-    this.drawUWBBase()
-  }
-
-
-  // 画点
-  drawPoint (svg: any) {
-    // 先清空以前的点
-    svg.selectAll('circle').remove()
-    svg.selectAll('text').remove()
-
-    // 建立循环，同时画几个点
-    for(let i = 0; i < this.count; i++) {
-      while (true) {
-        if (d3.polygonContains(this.hull, [this.cx, this.cy]) === true) {
-          let cx = this.cx
-          let cy = this.cy
-          let that = this
-          let index = i
-
-          // 添加点
-          svg.append('circle')
-          .attr("cx", cx)
-          .attr("cy", cy)
-          .attr("r", 10)
-          .attr("fill", "red")
-          .on("click", function (this: any, d: any, i: any) {
-            that.id = index+1 + ""
-            that.name = "xxx"
-            that.sex = "男"
-            that.position = `(${cx},${cy})`
-            that.time = moment().format('HH:mm:ss')
-            d3.select(this) 
-            .attr("r", 12)
-            .attr("fill","#aa00ff")
-          })
-
-          // 点旁边添加序号
-          svg.append('text')
-          .attr("x", cx-10)
-          .attr("y", cy-10)
-          .attr("fill", "black")
-          .text(i+1)
-
-          // 还原成0，方便下一次画点
-          this.cx = 0
-          this.cy = 0
-          break
-        } else {
-          this.cx = randomNum(15, 585)
-          this.cy = randomNum(45, 555)
-        }
+  // 求当前多边形最大坐标
+  findMax () {
+    let max = 0
+    this.scaleMaxSet.forEach( (val) => {
+      if (max < val) {
+        max = val
       }
-    }
-  }
+    })
 
-  async mounted () {
-    this.trigger = (this.$refs.button as any).$el 
-    await this.initMachineInfo()
-    this.nowAddress = this.machineAdd[0]
-
-    await this.initAllUWBInfo()
-    await this.getUWBData()
-
-    await this.getMapData()
-    this.drawBoundary()
-    this.drawUWBBase()
-      
-    // 刷新时间
-    setInterval( () => {
-      this.nowTime = moment().format('YYYY-MM-DD HH:mm:ss')
-    }, 10);
-
-    // 选择svg画布
-    let svg = d3.select("svg")
-    
-    let timer = setInterval( () => {
-      this.drawPoint(svg)
-    }, this.second * 1000)
+    this.scaleMax = max
   }
 }
 </script>
@@ -377,8 +356,10 @@ export default class Location extends Vue {
     }
 
     #svg {
-      height: 100%;
-      width: 100%;
+      margin: 50px auto;
+      height: 98%;
+      width: 98%;
+      border: 10px #ff6f00 dashed;
     }
 
     .text {
@@ -387,13 +368,9 @@ export default class Location extends Vue {
       margin: 10px 0;
     }
 
-    .tabs {
-      margin-top: 80px;
-      margin-bottom: 40px;
-    }
-
     .subWrap {
       position: relative;
+      margin-bottom: 80px;
       .title {
         margin-top: 80px;
         font-size: 80px;
@@ -419,8 +396,10 @@ export default class Location extends Vue {
 
     .update {
       position: absolute;
-      right: 0;
+      right: 65px;
       bottom: 0;
+      width: 10%;
+      height: 10%;
     }
 
     .list {
