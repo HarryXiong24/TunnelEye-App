@@ -22,9 +22,15 @@
         </div>
       </div>
 
+      <mu-row class="tabs">
+        <mu-tabs :value.sync="active" inverse full-width color="secondary" text-color="rgba(0, 0, 0, .54)"  center>
+          <mu-tab @click="changeTab(index)" v-for="(value, index) in coorGroups" :key="index">场景{{index+1}}</mu-tab>
+        </mu-tabs>
+      </mu-row>
+
       <mu-row>
         <mu-col span="12" id="#svg">
-          <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
+          <svg viewBox="0 0 1300 1300" preserveAspectRatio="xMidYMid slice">
           </svg>
           <mu-button icon color="red" class="update">
             <mu-icon value="autorenew"></mu-icon>
@@ -116,6 +122,7 @@
 import * as d3 from 'd3';
 import moment from 'moment'
 import { Vue, Component } from 'vue-property-decorator';
+import scale from '../../util/scale';
 
 // 生成从minNum到maxNum的随机数
 function randomNum(minNum: number, maxNum: number) {
@@ -134,6 +141,13 @@ function randomNum(minNum: number, maxNum: number) {
 
 @Component
 export default class Location extends Vue {
+  // tab标签切换
+  public active: number = 0;
+
+  // 平面图信息
+  public coorGroups: Array<any>[] = []
+  public ploygon: Array<any> = []
+
   // 获取下位机，选地点的参数
   public machineAdd: Array<any> = []
   public nowAddress: Array<any> = []
@@ -180,6 +194,7 @@ export default class Location extends Vue {
     console.log(this.$store.state.allUWBInfo)
   }
 
+  // 获取指定UWB数据
   async getUWBData () {
     this.nodeID = this.judgeNodeID()
     let data = {
@@ -191,6 +206,34 @@ export default class Location extends Vue {
     await this.$store.dispatch('getUWBData', data);
     console.log(this.$store.state.UWBData)
   }
+
+  // 获取平面图信息
+  async getMapData () {
+    await this.$store.dispatch('getMapData', {sysId: 1})
+    let mapData = this.$store.state.mapData
+    console.log(mapData)
+    
+    console.log(scale(2000, 2000, 1000))
+    // 测试 
+    this.coorGroups.push([[0,0],[1024,0],[1024,728],[900,455]])
+    this.coorGroups.push([[0,0],[0,728],[1024,728],[1300,400]])
+  }
+
+  // 画边界
+  drawBoundary () {
+    this.ploygon = this.coorGroups[this.active]
+    let hull = d3.polygonHull(this.ploygon)
+    
+    // 移除svg内部节点
+    d3.selectAll("svg > *").remove()
+
+    d3.select('svg').append('polygon')
+    .attr("points", hull)
+    .attr("fill", "pink")
+    .attr("stroke", "black")
+    .attr("stroke-width", 1)
+  }
+
 
   // 根据地点，获取nodeID 
   judgeNodeID () {
@@ -209,14 +252,12 @@ export default class Location extends Vue {
     this.open = false
   }
 
-  // 画边界
-  drawBoundary () {
-    d3.select('svg').append('polygon')
-    .attr("points", this.hull)
-    .attr("fill", "pink")
-    .attr("stroke", "black")
-    .attr("stroke-width", 1)
+  // 切换平面图场景
+  changeTab (index: number) {
+    this.active = index
+    this.drawBoundary()
   }
+
 
   // 画点
   drawPoint (svg: any) {
@@ -277,8 +318,7 @@ export default class Location extends Vue {
     await this.initAllUWBInfo()
     await this.getUWBData()
 
-    await this.$store.dispatch('getMapData')
-    console.log(this.$store.state.mapData)
+    await this.getMapData()
     this.drawBoundary()
       
     // 刷新时间
@@ -311,13 +351,17 @@ export default class Location extends Vue {
     #svg {
       height: 100%;
       width: 100%;
-      margin: 10px auto;
     }
 
     .text {
       color: #2d3a4b;
       text-align: center;
       margin: 10px 0;
+    }
+
+    .tabs {
+      margin-top: 80px;
+      margin-bottom: 40px;
     }
 
     .subWrap {
