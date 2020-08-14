@@ -51,6 +51,10 @@ export default class MessageList extends Vue {
     this.chooseIcon()
   }
 
+  updated() {
+    this.chooseIcon()
+  }
+
 }
 
 </script>

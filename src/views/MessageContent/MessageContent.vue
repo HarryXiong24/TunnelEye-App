@@ -65,7 +65,7 @@ export default class MessageContent extends Vue {
 
   async mounted() {
     await this.getMessageContent()
-    this.chooseIcon
+    this.chooseIcon()
   }
 }
 
