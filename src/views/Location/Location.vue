@@ -31,6 +31,23 @@
         </mu-row>
 
         <mu-row gutter justify-content="center">
+          <mu-col span="10" class="direct">
+            <div class="base">
+              <div class="square"></div>
+              <div>UWB基站</div>
+            </div>
+            <div class="base">
+              <div class="circle"></div>
+              <div>定位人员</div>
+            </div>
+            <div class="base">
+              <div class="area"></div>
+              <div>施工区域</div>
+            </div>
+          </mu-col>
+        </mu-row>
+
+        <mu-row gutter justify-content="center">
           <mu-col span="12">
             <p class="text">项目地点平面示意图</p>
           </mu-col>
@@ -368,6 +385,38 @@ export default class Location extends Vue {
       color: #2d3a4b;
       text-align: center;
       margin: 10px 0;
+    }
+
+    .direct {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      .base {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        .area {
+          width: 50px;
+          height: 50px;
+          background-color: rgb(255, 187, 198);
+          margin: 0 30px;
+        }
+        .square {
+          width: 50px;
+          height: 50px;
+          background-color: orange;
+          margin: 0 30px;
+        }   
+        .circle {
+          width: 50px;
+          height: 50px;
+          background: red;
+          border-radius: 50px;
+          margin: 0 30px;
+        }     
+      }
     }
 
     .subWrap {
