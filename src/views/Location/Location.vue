@@ -13,7 +13,7 @@
             </mu-button>
             <mu-popover cover :open.sync="open" :trigger="trigger">
               <mu-list>
-                <mu-list-item v-for="(val, index) in machineAdd" :key="index" button @click="chooseSite(val)">
+                <mu-list-item v-for="(val, index) in machineAdd" :key="index" button @click="changeSite(val, index)">
                   <mu-list-item-title>{{val}}</mu-list-item-title>
                 </mu-list-item>
               </mu-list>
@@ -22,90 +22,71 @@
         </div>
       </div>
 
-      <mu-row>
-        <mu-col span="12" id="#svg">
-          <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
-          </svg>
-          <mu-button icon color="red" class="update">
-            <mu-icon value="autorenew"></mu-icon>
-          </mu-button>
-        </mu-col>
-      </mu-row>
+      <div v-if="this.nowStatus === 1">
+        <mu-row>
+          <mu-col span="12" id="svg">
+            <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
+            </svg>
+          </mu-col>
+        </mu-row>
 
-      <mu-row gutter justify-content="center">
-        <mu-col span="6">
-          <p class="text">项目地点平面示意图</p>
-        </mu-col>
-      </mu-row>
+        <mu-row gutter justify-content="center">
+          <mu-col span="10" class="direct">
+            <div class="base">
+              <div class="square"></div>
+              <div>UWB基站</div>
+            </div>
+            <div class="base">
+              <div class="circle"></div>
+              <div>定位人员</div>
+            </div>
+            <div class="base">
+              <div class="area"></div>
+              <div>施工区域</div>
+            </div>
+          </mu-col>
+        </mu-row>
 
-      <mu-row gutter justify-content="center">
-        <mu-col span="6">
-          <p class="text">上位机状态: 在线</p>
-        </mu-col>
-      </mu-row>
+        <mu-row gutter justify-content="center">
+          <mu-col span="12">
+            <p class="text">项目地点平面示意图</p>
+          </mu-col>
+        </mu-row>
+
+        <mu-row gutter justify-content="center" v-if="this.isUWBInfo === true">
+          <mu-col span="12">
+            <p class="text">上位机状态: 在线</p>
+            <mu-button icon color="red" class="update" @click="updateInfo">
+              <mu-icon value="autorenew"></mu-icon>
+            </mu-button>
+          </mu-col>
+        </mu-row>
+
+        <mu-row gutter justify-content="center" v-else>
+          <mu-col span="12">
+            <p class="text">上位机状态在线, 暂无人员定位信息</p>
+            <mu-button icon color="red" class="update">
+              <mu-icon value="autorenew"></mu-icon>
+            </mu-button>
+          </mu-col>
+        </mu-row>
+
+      </div>
+
+      <mu-row v-else>
+        <mu-alert color="error" class="alert">
+          <mu-icon value="warning" class="icon"></mu-icon> 
+          <p class="content">抱歉，该下位机离线，暂无数据</p>
+        </mu-alert>
+      </mu-row> 
+
 
       <mu-row gutter justify-content="center">
         <mu-col span="12" class="list"> 
           <div class='title'>定位信息</div>
-          <mu-list textline="two-line">
-            <mu-divider></mu-divider>
 
-            <mu-list-item avatar :ripple="false">
-              <mu-icon value="star" left></mu-icon>
-              <mu-list-item-content class="wrap">
-                <mu-list-item-title class="name">工号</mu-list-item-title>
-                <mu-list-item-sub-title class="content">{{id}}</mu-list-item-sub-title>
-              </mu-list-item-content>
-              <mu-list-item-action class="item">
-                <mu-list-item-after-text class="msg">在岗时间 2 hr</mu-list-item-after-text>
-              </mu-list-item-action>
-              <mu-icon value="assignment_turned_in" right></mu-icon>
-            </mu-list-item>
-            <mu-divider></mu-divider>
+          <LocatingInfo :locatingInfo="locatingInfo"></LocatingInfo>
 
-            <mu-list-item avatar :ripple="false">
-              <mu-icon value="star" left></mu-icon>
-              <mu-list-item-content class="wrap">
-                <mu-list-item-title class="name">姓名</mu-list-item-title>
-                <mu-list-item-sub-title class="content">{{name}}</mu-list-item-sub-title>
-              </mu-list-item-content>
-              <mu-list-item-action class="item">
-                <mu-list-item-after-text class="msg">性别: {{sex}}</mu-list-item-after-text>
-              </mu-list-item-action>
-              <mu-icon value="assignment_ind" right></mu-icon>
-            </mu-list-item>
-
-            <mu-divider></mu-divider>
-
-            <mu-list-item avatar :ripple="false">
-              <mu-icon value="star" left></mu-icon>
-              <mu-list-item-content class="wrap">
-                <mu-list-item-title class="name">位置坐标</mu-list-item-title>
-                <mu-list-item-sub-title class="content">{{position}}</mu-list-item-sub-title>
-              </mu-list-item-content>
-              <mu-list-item-action class="item">
-                <mu-list-item-after-text class="msg">获得时间 {{time}}</mu-list-item-after-text>
-              </mu-list-item-action>
-              <mu-icon value="room" right></mu-icon>
-            </mu-list-item>
-
-            <mu-divider></mu-divider>
-
-            <mu-list-item avatar :ripple="false"> 
-              <mu-icon value="star" left></mu-icon>
-              <mu-list-item-content class="wrap">
-                <mu-list-item-title class="name">当前时间</mu-list-item-title>
-                <mu-list-item-sub-title class="content">{{nowTime}}</mu-list-item-sub-title>
-              </mu-list-item-content>
-              <mu-list-item-action style="margin-right: 9px;">
-                <mu-list-item-after-text></mu-list-item-after-text>
-              </mu-list-item-action>
-              <mu-icon value="update" right></mu-icon>
-            </mu-list-item>
-
-            <mu-divider></mu-divider>
-
-          </mu-list>        
         </mu-col>
       </mu-row>
     </div>
@@ -114,46 +95,54 @@
 
 <script lang="ts">
 import * as d3 from 'd3';
-import moment from 'moment'
+import moment from 'moment';
 import { Vue, Component } from 'vue-property-decorator';
+import { scale, filter, findMax } from '../../util/scale';
+import LocatingInfo from '../../components/LocatingInfo/LocatingInfo.vue';
 
-// 生成从minNum到maxNum的随机数
-function randomNum(minNum: number, maxNum: number) {
-  switch (arguments.length) {
-    case 1:
-      return parseInt(String(Math.random() * minNum + 1), 10);
-      break;
-    case 2:
-      return parseInt(String(Math.random() * ( maxNum - minNum + 1 ) + minNum), 10);
-      break;
-    default:
-      return 0;
-      break;
+@Component({
+  components: {
+    LocatingInfo
   }
-} 
-
-@Component
+})
 export default class Location extends Vue {
   // 获取下位机，选地点的参数
   public machineAdd: Array<any> = []
-  public nowAddress: Array<any> = []
+  public status: Array<any> = []
+  public nowAddress: string = ""
+  public nowStatus: number = 0;
   public open = false
   public trigger = null
 
-  // 获取所有UWB标签信息
-  public nodeID = 0
+  // 平面图信息
+  public coorGroups: Array<any>[] = []       // 多个多边形坐标集合
+  public scaleMaxSet: Array<any> = []        // 各组多边形最大坐标集合
+  public scaleMax: number = 0                // 当前多边形最大坐标集合
+  public uwbBaseCoor: Array<any> = []        // 基站位置
 
-  public cx = 0
-  public cy =0
-  public hull = d3.polygonHull([ [100,40], [10,290], [100,560], [500,560], [590,290], [500,40] ])
-  public count = 5
-  public second = 3
-  public id = "未选择人员"
-  public name = "未选择人员"
-  public sex = "未选择人员"
-  public position = "未选择人员"
-  public time = "无"
-  public nowTime = ""
+  // 获取所有UWB标签信息
+  public nodeID: number = 0
+  public allUWBInfo: Array<any> = []
+  public isUWBInfo: boolean = false
+
+  // 坐标信息
+  public cx: number = 0
+  public cy: number = 0
+  public second: number = 3
+
+  // 当前存在的人员信息
+  public locatingInfo: any = {
+    id: "未选择人员",
+    name: "未选择人员",
+    sector: "暂无信息",
+    position: "未选择人员",
+    measureTime: "未选择人员",
+    mobile: "暂无信息",
+    groupName: "暂无信息",
+  }
+
+  // 定时器
+  public timer: any = 0
 
   // 获取下位机地址
   async initMachineInfo () {
@@ -162,34 +151,9 @@ export default class Location extends Vue {
     if (machineInfo) {
       machineInfo.forEach( (val: any) => {
         this.machineAdd.push(val.devAddress) 
+        this.status.push(val.status)
       })
     }
-  }
-
-  // 获取所有UWB定位标签的定位信息
-  async initAllUWBInfo () {
-    this.nodeID = this.judgeNodeID()
-    let data = {
-      nodeId: this.nodeID,
-      startTime: moment().subtract(30, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
-      endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
-      sysId: 1,
-    }
-
-    await this.$store.dispatch('getAllUWBInfo', data);
-    console.log(this.$store.state.allUWBInfo)
-  }
-
-  async getUWBData () {
-    this.nodeID = this.judgeNodeID()
-    let data = {
-      nodeId: this.nodeID,
-      labelAdd: 1,
-      sysId: 1,
-    }
-
-    await this.$store.dispatch('getUWBData', data);
-    console.log(this.$store.state.UWBData)
   }
 
   // 根据地点，获取nodeID 
@@ -203,19 +167,124 @@ export default class Location extends Vue {
     return nodeID
   }
 
-  // 选择地点
-  chooseSite (val: any) {
-    this.nowAddress = val 
-    this.open = false
+  // 获取所有UWB定位标签的定位信息
+  async initAllUWBInfo () {
+    this.nodeID = this.judgeNodeID()
+    let data = {
+      nodeId: this.nodeID,
+      startTime: moment().subtract(30, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
+      endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
+      sysId: 1,
+    }
+
+    await this.$store.dispatch('getAllUWBInfo', data)
+    this.allUWBInfo = this.$store.state.allUWBInfo.data
+    if (this.allUWBInfo) {
+      this.isUWBInfo = true
+    } else {
+      this.isUWBInfo = false
+    }
+  }
+
+  // 获取指定UWB数据
+  async getUWBData (labelAdd: number) {
+    this.nodeID = this.judgeNodeID()
+    let data = {
+      nodeId: this.nodeID,
+      labelAdd: labelAdd,
+      sysId: 1,
+    }
+
+    await this.$store.dispatch('getUWBData', data);
+    let UWBData = this.$store.state.UWBData
+    this.locatingInfo.id = UWBData.userid
+    this.locatingInfo.name = UWBData.userName
+    this.locatingInfo.measureTime = UWBData.measureTime
+    this.locatingInfo.position = `(${UWBData.xcoor}, ${UWBData.ycoor})`
+    this.locatingInfo.sector = UWBData.depName
+    this.locatingInfo.mobile = UWBData.mobile
+    this.locatingInfo.groupName = UWBData.groupName
+  }
+
+  // 获取平面图信息，并处理数据
+  async getMapData () {
+    await this.$store.dispatch('getMapData', {sysId: 1})
+    let mapData = this.$store.state.mapData
+    
+    // 测试 
+    this.coorGroups.push(filter([[0,0],[1024,0],[1024,728],[1000,1255]], 600))
+    this.coorGroups.push(filter([[0,0],[0,728],[1024,728],[1300,400]], 600))
+
+    this.scaleMaxSet.push(findMax([[0,0],[1024,0],[1024,728],[1000,1255]]))
+    this.scaleMaxSet.push(findMax([[0,0],[0,728],[1024,728],[1300,400]]))
+
+    this.uwbBaseCoor = mapData.uwbBaseCoor
+  }
+
+  // 准备阶段
+  async beforeDarw() {
+    clearInterval(this.timer);
+    if (this.nowStatus === 0) {
+      return
+    } else {
+      await this.getMapData()
+      this.drawBoundary()
+      this.drawUWBBase()
+
+      // 选择svg画布
+      let svg = d3.select("svg")
+
+      await this.initAllUWBInfo()
+
+      if (this.isUWBInfo === false) {
+
+      } else {
+        this.drawPoint(svg)
+      }
+
+      this.timer = setInterval( async () => {
+        // 每隔一段时间获取所有UWB标签信息
+        await this.initAllUWBInfo()
+        if (this.isUWBInfo === false) {
+
+        } else {
+          this.drawPoint(svg)
+        }
+      }, this.second * 1000)
+    }
   }
 
   // 画边界
   drawBoundary () {
-    d3.select('svg').append('polygon')
-    .attr("points", this.hull)
-    .attr("fill", "pink")
-    .attr("stroke", "black")
-    .attr("stroke-width", 1)
+    // 移除svg内部节点
+    d3.selectAll("svg > *").remove()
+
+    this.coorGroups.forEach( (val) => {
+      let hull = d3.polygonHull(val)
+
+      d3.select('svg').append('polygon')
+      .attr("points", hull)
+      .attr("fill", "#ffc2cc5c")
+      .attr("stroke", "black")
+      .attr("stroke-width", 2)
+    })
+  }
+
+  // 画基站监测点
+  drawUWBBase () {
+    this.findMax()
+    let svg = d3.select("svg")
+    // 先清空以前的点
+    svg.selectAll('rect').remove()
+
+    this.uwbBaseCoor.forEach( (val) => {
+      svg.append('rect')
+      .attr("x", scale(val.xcoor, this.scaleMax, 600))
+      .attr("y", scale(val.ycoor, this.scaleMax, 600))
+      .attr("height", 12)
+      .attr("width", 12)
+      .attr("fill", "orange")
+    })
   }
 
   // 画点
@@ -225,47 +294,30 @@ export default class Location extends Vue {
     svg.selectAll('text').remove()
 
     // 建立循环，同时画几个点
-    for(let i = 0; i < this.count; i++) {
-      while (true) {
-        if (d3.polygonContains(this.hull, [this.cx, this.cy]) === true) {
-          let cx = this.cx
-          let cy = this.cy
-          let that = this
-          let index = i
+    for (let i = 0; i < this.allUWBInfo.length; i++) {
+      let cx = Math.floor(scale(this.allUWBInfo[i].xcoor, this.scaleMax, 600))
+      let cy = Math.floor(scale(this.allUWBInfo[i].ycoor, this.scaleMax, 600))
+      let labelAdd = this.allUWBInfo[i].labelAdd
+      let that = this
+      // 添加点
+      svg.append('circle')
+      .attr("cx", cx)
+      .attr("cy", cy)
+      .attr("r", 10)
+      .attr("fill", "red")
+      .on("click", async function (this: any, d: any, i: any) {
+        await that.getUWBData(labelAdd)
+        d3.select(this) 
+        .attr("r", 12)
+        .attr("fill","#aa00ff")
+      })
 
-          // 添加点
-          svg.append('circle')
-          .attr("cx", cx)
-          .attr("cy", cy)
-          .attr("r", 10)
-          .attr("fill", "red")
-          .on("click", function (this: any, d: any, i: any) {
-            that.id = index+1 + ""
-            that.name = "xxx"
-            that.sex = "男"
-            that.position = `(${cx},${cy})`
-            that.time = moment().format('HH:mm:ss')
-            d3.select(this) 
-            .attr("r", 12)
-            .attr("fill","#aa00ff")
-          })
-
-          // 点旁边添加序号
-          svg.append('text')
-          .attr("x", cx-10)
-          .attr("y", cy-10)
-          .attr("fill", "black")
-          .text(i+1)
-
-          // 还原成0，方便下一次画点
-          this.cx = 0
-          this.cy = 0
-          break
-        } else {
-          this.cx = randomNum(15, 585)
-          this.cy = randomNum(45, 555)
-        }
-      }
+      // 点旁边添加序号
+      svg.append('text')
+      .attr("x", cx-10)
+      .attr("y", cy-10)
+      .attr("fill", "black")
+      .text(labelAdd)
     }
   }
 
@@ -273,26 +325,39 @@ export default class Location extends Vue {
     this.trigger = (this.$refs.button as any).$el 
     await this.initMachineInfo()
     this.nowAddress = this.machineAdd[0]
+    this.nowStatus = this.status[0]
 
-    await this.initAllUWBInfo()
-    await this.getUWBData()
+    await this.beforeDarw()
+  }
 
-    // 测试
-    await this.$store.dispatch('getMapData', {sysId: 1})
-    console.log(this.$store.state.mapData)
-    this.drawBoundary()
-      
-    // 刷新时间
-    setInterval( () => {
-      this.nowTime = moment().format('YYYY-MM-DD HH:mm:ss')
-    }, 10);
+  beforeDestroy() {
+    clearInterval(this.timer);
+  }
 
-    // 选择svg画布
-    let svg = d3.select("svg")
-    
-    let timer = setInterval( () => {
-      this.drawPoint(svg)
-    }, this.second * 1000)
+  // 选择地点
+  async changeSite (val: any, index: any) {
+    this.nowAddress = val 
+    this.nowStatus = this.status[index]
+    this.open = false
+
+    await this.beforeDarw()
+  }
+
+  // 求当前多边形最大坐标
+  findMax () {
+    let max = 0
+    this.scaleMaxSet.forEach( (val) => {
+      if (max < val) {
+        max = val
+      }
+    })
+
+    this.scaleMax = max
+  }
+
+  // 手动更新
+  async updateInfo() {
+    await this.beforeDarw()
   }
 }
 </script>
@@ -310,9 +375,10 @@ export default class Location extends Vue {
     }
 
     #svg {
-      height: 100%;
-      width: 100%;
-      margin: 10px auto;
+      margin: 50px auto;
+      height: 98%;
+      width: 98%;
+      border: 10px #ff6f00 dashed;
     }
 
     .text {
@@ -321,8 +387,41 @@ export default class Location extends Vue {
       margin: 10px 0;
     }
 
+    .direct {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      .base {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        .area {
+          width: 50px;
+          height: 50px;
+          background-color: rgb(255, 187, 198);
+          margin: 0 30px;
+        }
+        .square {
+          width: 50px;
+          height: 50px;
+          background-color: orange;
+          margin: 0 30px;
+        }   
+        .circle {
+          width: 50px;
+          height: 50px;
+          background: red;
+          border-radius: 50px;
+          margin: 0 30px;
+        }     
+      }
+    }
+
     .subWrap {
       position: relative;
+      margin-bottom: 80px;
       .title {
         margin-top: 80px;
         font-size: 80px;
@@ -346,10 +445,23 @@ export default class Location extends Vue {
       }
     }
 
+    .alert {
+      width: 90%;
+      margin: 30px auto;
+      .icon {
+        margin-right: 30px;
+      }
+      .content {
+        font-size: 66px;
+      }
+    }
+
     .update {
       position: absolute;
-      right: 0;
+      right: 65px;
       bottom: 0;
+      width: 10%;
+      height: 10%;
     }
 
     .list {
@@ -362,24 +474,6 @@ export default class Location extends Vue {
           content: '';
           border-left: 20px #ff6f00 solid;
           padding-left: 30px;
-        }
-      }
-      .wrap {
-        margin-left: 40px;
-        padding-left: 20px;
-        .name {
-          font-size: 72px;
-        }
-        .content {
-          font-size: 68px;
-          color: rgba(0, 0, 0, .87);
-        }
-      }
-      .item {
-        margin-right: 60px;
-        .msg {
-          width: 600px;
-          font-size: 62px;
         }
       }
     }
