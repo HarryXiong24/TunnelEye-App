@@ -73,13 +73,18 @@
 
       </div>
 
-      <mu-row v-else>
+      <mu-row v-else-if="this.nowStatus === 0">
         <mu-alert color="error" class="alert">
           <mu-icon value="warning" class="icon"></mu-icon> 
           <p class="content">抱歉，该下位机离线，暂无数据</p>
         </mu-alert>
       </mu-row> 
 
+      <mu-row v-else-if="this.nowStatus === -1" justify-content="center">
+        <mu-circular-progress class="loading" color="primary" :stroke-width="7" :size="56"></mu-circular-progress>
+        <mu-circular-progress class="loading" color="secondary" :stroke-width="7" :size="56"></mu-circular-progress>
+        <mu-circular-progress class="loading" color="warning" :stroke-width="7" :size="56"></mu-circular-progress>
+      </mu-row> 
 
       <mu-row gutter justify-content="center">
         <mu-col span="12" class="list"> 
@@ -110,7 +115,7 @@ export default class Location extends Vue {
   public machineAdd: Array<any> = []
   public status: Array<any> = []
   public nowAddress: string = ""
-  public nowStatus: number = 0;
+  public nowStatus: number = -1;
   public open = false
   public trigger = null
 
@@ -264,7 +269,7 @@ export default class Location extends Vue {
 
       d3.select('svg').append('polygon')
       .attr("points", hull)
-      .attr("fill", "#ffc2cc5c")
+      .attr("fill", "#ffcbd3")
       .attr("stroke", "black")
       .attr("stroke-width", 2)
     })
@@ -281,9 +286,9 @@ export default class Location extends Vue {
       svg.append('rect')
       .attr("x", scale(val.xcoor, this.scaleMax, 600))
       .attr("y", scale(val.ycoor, this.scaleMax, 600))
-      .attr("height", 12)
-      .attr("width", 12)
-      .attr("fill", "orange")
+      .attr("height", 15)
+      .attr("width", 15)
+      .attr("fill", "#aa00ff")
     })
   }
 
@@ -309,7 +314,7 @@ export default class Location extends Vue {
         await that.getUWBData(labelAdd)
         d3.select(this) 
         .attr("r", 12)
-        .attr("fill","#aa00ff")
+        .attr("fill","#655bff")
       })
 
       // 点旁边添加序号
@@ -356,8 +361,8 @@ export default class Location extends Vue {
   }
 
   // 手动更新
-  async updateInfo() {
-    await this.beforeDarw()
+  updateInfo() {
+    this.beforeDarw()
   }
 }
 </script>
@@ -372,6 +377,10 @@ export default class Location extends Vue {
       .status {
         float: right;
       }
+    }
+
+    .loading {
+      margin: 10px 100px;
     }
 
     #svg {
@@ -406,7 +415,7 @@ export default class Location extends Vue {
         .square {
           width: 50px;
           height: 50px;
-          background-color: orange;
+          background-color: #aa00ff;
           margin: 0 30px;
         }   
         .circle {
