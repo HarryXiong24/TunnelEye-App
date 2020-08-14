@@ -7,7 +7,7 @@
       <mu-avatar color="#ffca28" v-else-if="icon === 1">
         <mu-icon value="priority_high"></mu-icon>
       </mu-avatar>
-      <mu-avatar color="#f44336" v-else>
+      <mu-avatar color="#f44336" v-else-if="icon === 2">
         <mu-icon value="warning"></mu-icon>
       </mu-avatar>
     </mu-list-item-action>
@@ -38,9 +38,7 @@ export default class MessageList extends Vue {
       this.icon = 1
     } else if (this.list.level === '严重') {
       this.icon = 2
-    } else {
-      this.icon = 0
-    }
+    } 
   }
 
   goMessageContent(value: number) {
@@ -50,7 +48,9 @@ export default class MessageList extends Vue {
   mounted() {
     this.chooseIcon()
   }
-
+  updated() {
+    this.chooseIcon()
+  }
 }
 
 </script>

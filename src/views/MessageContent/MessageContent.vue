@@ -16,7 +16,7 @@
           <mu-avatar slot="avatar" color="#ffca28" v-else-if="icon === 1">
             <mu-icon value="priority_high"></mu-icon>
           </mu-avatar>
-          <mu-avatar slot="avatar" color="#f44336" v-else>
+          <mu-avatar slot="avatar" color="#f44336" v-else-if="icon === 2">
             <mu-icon value="warning"></mu-icon>
           </mu-avatar>
         </mu-card-header>
@@ -49,8 +49,6 @@ export default class MessageContent extends Vue {
       this.icon = 1
     } else if (this.messageContent.level === '严重') {
       this.icon = 2
-    } else {
-      this.icon = 0
     }
   }
 
@@ -65,7 +63,7 @@ export default class MessageContent extends Vue {
 
   async mounted() {
     await this.getMessageContent()
-    this.chooseIcon
+    this.chooseIcon()
   }
 }
 

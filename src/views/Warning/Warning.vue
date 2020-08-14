@@ -257,7 +257,6 @@ export default class Warning extends Vue {
     let messageLists = this.$store.state.messageLists
     this.lists = messageLists.data
     this.pageSize = data.limit
-    console.log(this.lists)
   }
 
   async mounted() {

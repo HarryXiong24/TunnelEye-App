@@ -118,21 +118,6 @@ import moment from 'moment';
 import { Vue, Component } from 'vue-property-decorator';
 import { scale, filter, findMax } from '../../util/scale';
 
-// 生成从minNum到maxNum的随机数
-function randomNum(minNum: number, maxNum: number) {
-  switch (arguments.length) {
-    case 1:
-      return parseInt(String(Math.random() * minNum + 1), 10);
-      break;
-    case 2:
-      return parseInt(String(Math.random() * ( maxNum - minNum + 1 ) + minNum), 10);
-      break;
-    default:
-      return 0;
-      break;
-  }
-} 
-
 @Component
 export default class Location extends Vue {
   // 获取下位机，选地点的参数
@@ -154,13 +139,16 @@ export default class Location extends Vue {
   // 当前存在的人员信息
   public cx: number = 0
   public cy: number = 0
-  public second: number = 10
+  public second: number = 3
   public id: string = "未选择人员"
   public name: string = "未选择人员"
   public sex: string = "未选择人员"
   public position: string = "未选择人员"
   public time: string = "无"
   public nowTime: string = ""
+
+  // 定时器
+  public timer: any = 0
 
   // 获取下位机地址
   async initMachineInfo () {
@@ -185,7 +173,6 @@ export default class Location extends Vue {
 
     await this.$store.dispatch('getAllUWBInfo', data)
     this.allUWBInfo = this.$store.state.allUWBInfo.data
-    console.log(this.allUWBInfo)
   }
 
   // 获取指定UWB数据
@@ -193,7 +180,7 @@ export default class Location extends Vue {
     this.nodeID = this.judgeNodeID()
     let data = {
       nodeId: this.nodeID,
-      labelAdd: 1,
+      labelAdd: labelAdd,
       sysId: 1,
     }
 
@@ -263,7 +250,6 @@ export default class Location extends Vue {
       let cx = Math.floor(scale(this.allUWBInfo[i].xcoor, this.scaleMax, 600))
       let cy = Math.floor(scale(this.allUWBInfo[i].ycoor, this.scaleMax, 600))
       let labelAdd = this.allUWBInfo[i].labelAdd
-      console.log(labelAdd)
       let that = this
       // 添加点
       svg.append('circle')
@@ -305,11 +291,15 @@ export default class Location extends Vue {
     // 选择svg画布
     let svg = d3.select("svg")
 
-    let timer = setInterval( async () => {
+    this.timer = setInterval( async () => {
       // 每隔一段时间获取所有UWB标签信息
       await this.initAllUWBInfo()
       this.drawPoint(svg)
     }, this.second * 1000)
+  }
+
+  beforeDestroy() {
+    clearInterval(this.timer);
   }
 
   // 根据地点，获取nodeID 
