@@ -29,7 +29,7 @@ export default class FunctionTop extends Vue {
 
   mounted () {
     setInterval( () => {
-      this.time = moment().format('YYYY年M月H日 HH:mm:ss')
+      this.time = moment().format('YYYY年M月D日 HH:mm:ss')
     }, 100)
   }
 }

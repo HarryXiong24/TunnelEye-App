@@ -3,7 +3,7 @@
 
     <p class="title">当日天气</p>
 
-    <mu-row class="weather" v-if="weatherData.has">
+    <mu-row class="weather" v-if="weatherData.has === 1">
       <mu-alert color="#ec407a" class="item">
         <mu-icon value="filter_drama" class="icon"></mu-icon> 
         <p class="content">{{weatherData.city}}</p>
@@ -35,11 +35,17 @@
       </mu-alert>
     </mu-row>
 
-    <mu-row v-else>
+    <mu-row v-else-if="weatherData.has === -1">
       <mu-alert color="error" class="alert">
         <mu-icon value="warning" class="icon"></mu-icon> 
         <p class="content">抱歉，当前位置获取失败，暂无数据</p>
       </mu-alert>
+    </mu-row> 
+
+    <mu-row v-else-if="weatherData.has === 0" justify-content="center">
+      <mu-circular-progress class="loading" color="primary" :stroke-width="7" :size="56"></mu-circular-progress>
+      <mu-circular-progress class="loading" color="secondary" :stroke-width="7" :size="56"></mu-circular-progress>
+      <mu-circular-progress class="loading" color="warning" :stroke-width="7" :size="56"></mu-circular-progress>
     </mu-row> 
 
     <p class="title">安全手册</p>
@@ -95,9 +101,7 @@
 
         <mu-list textline="two-line" class="list">
           <mu-sub-header class="subHeader">消息预警</mu-sub-header>
-          
           <MessageList v-for="(list, index) in lists" :key=index :list="list"></MessageList>
-
         </mu-list>
 
         <mu-container>
@@ -150,7 +154,7 @@ export default class Warning extends Vue {
   public active: number = 0
   // 天气数据
   public weatherData = {
-    has: false,
+    has: 0,
     city: '',
     type: '',
     windPower: '',
@@ -189,7 +193,7 @@ export default class Warning extends Vue {
       await this.$store.dispatch('getWeatherInfo', data)
       let weatherInfo = this.$store.state.weatherInfo 
       if (weatherInfo && weatherInfo.status === 1000) {
-        this.weatherData.has = true
+        this.weatherData.has = 1
         let data = weatherInfo.data
         this.weatherData.city = data.city
         this.weatherData.type = data.forecast[0].type
@@ -203,10 +207,10 @@ export default class Warning extends Vue {
         this.weatherData.high = data.forecast[0].high
 
       } else {
-        this.weatherData.has = false
+        this.weatherData.has = -1
       }
     } else {
-      this.weatherData.has = false
+      this.weatherData.has = -1
     }
   }
 
@@ -259,13 +263,13 @@ export default class Warning extends Vue {
     this.pageSize = data.limit
   }
 
-  async mounted() {
-    await this.getWeather()
-    await this.getMessageLists()
+  mounted() {
+    this.getMessageLists()
+    this.getWeather()
   }
 
-  async changeTab() {
-    await this.getMessageLists()
+  changeTab() {
+    this.getMessageLists()
   }
 }
 
@@ -306,6 +310,10 @@ export default class Warning extends Vue {
       .content {
         font-size: 66px;
       }
+    }
+
+    .loading {
+      margin: 10px 100px;
     }
 
     .carousel {
