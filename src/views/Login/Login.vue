@@ -1,38 +1,39 @@
 <template>
   <div class="login-container">
 
-      <img src="../../assets/logo.png" alt="LoginLogo" class="logo">
+    <img src="../../assets/logo.png" alt="LoginLogo" class="logo">
 
-      <div class="title-container">
-          <p>欢迎使用</p>
-      </div>
+    <div class="title-container">
+      <p>隧道环境及人员</p>
+      <p>监测系统</p>
+    </div>
 
-      <mu-container>
-        <mu-form ref="form" :model="validateForm" class="mu-demo-form">
-          <mu-form-item icon="account_circle" prop="username" :rules="usernameRules">
-            <mu-text-field placeholder="用户名" v-model="validateForm.username" prop="username"></mu-text-field>
-          </mu-form-item>
-          <mu-form-item  icon="locked" prop="password" :rules="passwordRules">
-              <mu-text-field  placeholder="密码" v-model="validateForm.password" prop="password" :action-icon="visibility ? 'visibility_off' : 'visibility'" :action-click="() => (visibility = !visibility)" :type="visibility ? 'text' : 'password'"></mu-text-field>
-          </mu-form-item>
-          <mu-form-item  icon="code" prop="captcha" :rules="captchaRules">
-            <mu-text-field v-model="validateForm.captcha" placeholder="验证码"></mu-text-field>
-            <img class="captcha" :src="this.$store.state.captcha" alt="captcha" @click="changeCaptcha">
-          </mu-form-item>
-          <mu-form-item>
-            <mu-button color="indigo400" @click="submit" round full-width ripple>登录</mu-button>
-          </mu-form-item>
-        </mu-form>
-      </mu-container>
-      
-      <mu-dialog title="提示" width="360" :open.sync="alert">
-        <p class="alert">{{alertText}}</p>
-        <mu-button slot="actions" flat color="red800" @click="closeSimpleDialog">关闭</mu-button>
-      </mu-dialog>
+    <mu-container>
+      <mu-form ref="form" :model="validateForm" class="mu-demo-form">
+        <mu-form-item icon="account_circle" prop="username" :rules="usernameRules">
+          <mu-text-field placeholder="用户名" v-model="validateForm.username" prop="username"></mu-text-field>
+        </mu-form-item>
+        <mu-form-item  icon="locked" prop="password" :rules="passwordRules">
+            <mu-text-field  placeholder="密码" v-model="validateForm.password" prop="password" :action-icon="visibility ? 'visibility_off' : 'visibility'" :action-click="() => (visibility = !visibility)" :type="visibility ? 'text' : 'password'"></mu-text-field>
+        </mu-form-item>
+        <mu-form-item  icon="code" prop="captcha" :rules="captchaRules">
+          <mu-text-field v-model="validateForm.captcha" placeholder="验证码"></mu-text-field>
+          <img class="captcha" :src="this.$store.state.captcha" alt="captcha" @click="changeCaptcha">
+        </mu-form-item>
+        <mu-form-item>
+          <mu-button color="indigo400" @click="submit" round full-width ripple>登录</mu-button>
+        </mu-form-item>
+      </mu-form>
+    </mu-container>
+    
+    <mu-dialog title="提示" width="360" :open.sync="alert">
+      <p class="alert">{{alertText}}</p>
+      <mu-button slot="actions" flat color="red800" @click="closeSimpleDialog">关闭</mu-button>
+    </mu-dialog>
 
-      <div class="bio-container">
-        <p>Copyright © Harry Xiong</p>
-      </div>
+    <div class="bio-container">
+      <p>Copyright © Harry Xiong</p>
+    </div>
     
   </div>
 </template>
@@ -112,7 +113,6 @@ export default class Login extends Vue {
   mounted() {
     this.changeCaptcha()
   }
-
 }
 
 </script>
@@ -128,7 +128,7 @@ export default class Login extends Vue {
     width: 100%;
     background-color: $light_gray;
     overflow: hidden;
-    position: fixed;
+    position: absolute;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -137,13 +137,13 @@ export default class Login extends Vue {
     .logo {
       width: 400px;
       height: 400px;
-      margin: 280px auto 220px auto;
+      margin: 200px auto 200px auto;
     }
 
     .title-container { 
-      font-size: 140px;
+      font-size: 120px;
       color: $font;
-      margin: 0px auto 200px auto;
+      margin: 0px auto 180px auto;
       text-align: center;
       font-weight: bold;
     }

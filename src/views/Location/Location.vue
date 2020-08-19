@@ -213,15 +213,19 @@ export default class Location extends Vue {
 
   // 获取平面图信息，并处理数据
   async getMapData () {
-    await this.$store.dispatch('getMapData', {sysId: 1})
-    let mapData = this.$store.state.mapData
-    
-    // 测试 
-    this.coorGroups.push(filter([[0,0],[1024,0],[1024,728],[1000,1255]], 600))
-    this.coorGroups.push(filter([[0,0],[0,728],[1024,728],[1300,400]], 600))
+    this.nodeID = this.judgeNodeID()
+    let data = {
+      nodeId: this.nodeID
+    }
 
-    this.scaleMaxSet.push(findMax([[0,0],[1024,0],[1024,728],[1000,1255]]))
-    this.scaleMaxSet.push(findMax([[0,0],[0,728],[1024,728],[1300,400]]))
+    await this.$store.dispatch('getMapData', data)
+    let mapData = this.$store.state.mapData
+
+    for (let i = 0; i < mapData.ploygon.coorGroup.length; i++) {
+      let val = mapData.ploygon.coorGroup[i]
+      this.scaleMaxSet.push(findMax(val))
+      this.coorGroups.push(filter(val, 600))
+    }
 
     this.uwbBaseCoor = mapData.uwbBaseCoor
   }
@@ -251,7 +255,7 @@ export default class Location extends Vue {
         // 每隔一段时间获取所有UWB标签信息
         await this.initAllUWBInfo()
         if (this.isUWBInfo === false) {
-
+          return    
         } else {
           this.drawPoint(svg)
         }
