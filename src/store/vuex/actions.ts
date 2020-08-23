@@ -14,6 +14,7 @@ import {
   RECEIVE_MESSAGELISTS,
   RECEIVE_MESSAGECONTENT,
   RECEIVE_MAPDATA,
+  RECEIVE_SYSID,
 } from './mutation-types'
 
 import {
@@ -29,6 +30,7 @@ import {
   reqMessageLists,
   reqMessageContent,
   reqMapData,
+  reqSysId,
 } from '../../api/index'
 
 export default {
@@ -143,6 +145,15 @@ export default {
     // 提交一个mutation
     const mapData = result.data
     commit(RECEIVE_MAPDATA, {mapData})
+  },
+
+  // 异步获取平面图数据
+  async getSysId({commit}: any, data: any) {
+    // 发送异步ajax请求
+    const result = await reqSysId(data)
+    // 提交一个mutation
+    const sysId = result.data
+    commit(RECEIVE_SYSID, {sysId})
   }
 
 }

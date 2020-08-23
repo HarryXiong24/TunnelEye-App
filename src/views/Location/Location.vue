@@ -1,11 +1,21 @@
 <template>
   <div>
     <div class="main">
+
+      <div class='siteTitle'>位置选择</div> 
+      <mu-row class="siteWrap">  
+        <mu-col span="12" lg="4" sm="6">
+          <mu-select v-model="nowAddress" full-width class="choose" @change="changeSite(nowAddress)">
+            <mu-option v-for="(option, index) in machineAdd" :key="index" :label="option" :value="option"></mu-option>
+          </mu-select>
+        </mu-col>
+      </mu-row>
+
       <div class="subWrap">
         <div class='title'>定位分布</div>
         <div class="choose">
           <div class="content">
-            <p class="text">{{nowAddress}}</p>
+            <p class="text">主控机{{nowSysId}}</p>
           </div>
           <div class="chooseSite">
             <mu-button ref="button" icon @click="open = !open">
@@ -13,8 +23,8 @@
             </mu-button>
             <mu-popover cover :open.sync="open" :trigger="trigger">
               <mu-list>
-                <mu-list-item v-for="(val, index) in machineAdd" :key="index" button @click="changeSite(val, index)">
-                  <mu-list-item-title>{{val}}</mu-list-item-title>
+                <mu-list-item v-for="(val, index) in sysId" :key="index" button @click="changeSys(val, index)">
+                  <mu-list-item-title>主控机{{val}}</mu-list-item-title>
                 </mu-list-item>
               </mu-list>
             </mu-popover>
@@ -22,7 +32,8 @@
         </div>
       </div>
 
-      <div v-if="this.nowStatus === 1">
+      <div v-if="this.nowStatus === 1 && this.hasSysInfo === 1 && this.hasMapData === 1">
+        
         <mu-row>
           <mu-col span="12" id="svg">
             <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
@@ -73,10 +84,24 @@
 
       </div>
 
+      <mu-row v-else-if="this.nowStatus === 1 && this.hasSysInfo === 1 && this.hasMapData === 0">
+        <mu-alert color="error" class="alert">
+          <mu-icon value="warning" class="icon"></mu-icon> 
+          <p class="content">抱歉，无平面图定位数据</p>
+        </mu-alert>
+      </mu-row> 
+
       <mu-row v-else-if="this.nowStatus === 0">
         <mu-alert color="error" class="alert">
           <mu-icon value="warning" class="icon"></mu-icon> 
           <p class="content">抱歉，该下位机离线，暂无数据</p>
+        </mu-alert>
+      </mu-row> 
+
+      <mu-row v-else-if="this.nowStatus === 1 && this.hasSysInfo === 0">
+        <mu-alert color="error" class="alert">
+          <mu-icon value="warning" class="icon"></mu-icon> 
+          <p class="content">抱歉，请查看是否安装主控机</p>
         </mu-alert>
       </mu-row> 
 
@@ -115,7 +140,13 @@ export default class Location extends Vue {
   public machineAdd: Array<any> = []
   public status: Array<any> = []
   public nowAddress: string = ""
-  public nowStatus: number = -1;
+  public nowStatus: number = -1
+  public nodeID: number = 0
+
+  // 选择sysId信息
+  public sysId: Array<any> = []
+  public nowSysId: number = -1
+  public hasSysInfo: number = -1
   public open = false
   public trigger = null
 
@@ -124,9 +155,9 @@ export default class Location extends Vue {
   public scaleMaxSet: Array<any> = []        // 各组多边形最大坐标集合
   public scaleMax: number = 0                // 当前多边形最大坐标集合
   public uwbBaseCoor: Array<any> = []        // 基站位置
+  public hasMapData: number = -1
 
   // 获取所有UWB标签信息
-  public nodeID: number = 0
   public allUWBInfo: Array<any> = []
   public isUWBInfo: boolean = false
 
@@ -153,37 +184,82 @@ export default class Location extends Vue {
   async initMachineInfo () {
     await this.$store.dispatch("getMachineInfo")
     let machineInfo = this.$store.state.machineInfo
+
     if (machineInfo) {
       machineInfo.forEach( (val: any) => {
-        this.machineAdd.push(val.devAddress) 
+        this.machineAdd.push(val.devInfo) 
         this.status.push(val.status)
       })
     }
   }
 
-  // 根据地点，获取nodeID 
+  // 根据地点，获取nodeID，同时判断下位机是否在线
   judgeNodeID () {
-    let nodeID = 0;
     this.$store.state.machineInfo.forEach( (val: any) => {
-      if (this.nowAddress === val.devAddress) {
-        nodeID = val.nodeId
+      if (this.nowAddress === val.devInfo) {
+        this.nodeID = val.nodeId
+        this.nowStatus = val.status
       }
     })
-    return nodeID
+  }
+
+  // 获取sysId
+  async initSysId() {
+    this.sysId = []
+    await this.judgeNodeID()
+
+    let data = {
+      nodeId: this.nodeID
+    }
+
+    await this.$store.dispatch('getSysId', data)
+    let sysId = this.$store.state.sysId
+    console.log(sysId)
+    if (!sysId || sysId.code === -1) {
+      this.hasSysInfo = 0
+    } else {
+      this.hasSysInfo = 1
+      this.sysId = sysId
+    }
+  }
+
+  // 获取平面图信息，并处理数据
+  async getMapData () {
+    
+    let data = {
+      sysId: this.nowSysId
+    }
+
+    await this.$store.dispatch('getMapData', data)
+    let mapData = this.$store.state.mapData
+
+    if (!mapData || mapData.code === -1) {
+      this.hasMapData = 0
+    } else {
+      this.hasMapData = 1
+      for (let i = 0; i < mapData.ploygon.coorGroup.length; i++) {
+        let val = mapData.ploygon.coorGroup[i]
+        this.scaleMaxSet.push(findMax(val))
+        this.coorGroups.push(filter(val, 600))
+      }
+
+      this.uwbBaseCoor = mapData.uwbBaseCoor
+    }
+
   }
 
   // 获取所有UWB定位标签的定位信息
   async initAllUWBInfo () {
-    this.nodeID = this.judgeNodeID()
+
     let data = {
-      nodeId: this.nodeID,
       startTime: moment().subtract(30, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
       endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
-      sysId: 1,
+      sysId: this.nowSysId,
     }
 
     await this.$store.dispatch('getAllUWBInfo', data)
     this.allUWBInfo = this.$store.state.allUWBInfo.data
+    // console.log(this.allUWBInfo)
     if (this.allUWBInfo) {
       this.isUWBInfo = true
     } else {
@@ -193,11 +269,8 @@ export default class Location extends Vue {
 
   // 获取指定UWB数据
   async getUWBData (labelAdd: number) {
-    this.nodeID = this.judgeNodeID()
     let data = {
-      nodeId: this.nodeID,
-      labelAdd: labelAdd,
-      sysId: 1,
+      labelId: labelAdd
     }
 
     await this.$store.dispatch('getUWBData', data);
@@ -211,37 +284,19 @@ export default class Location extends Vue {
     this.locatingInfo.groupName = UWBData.groupName
   }
 
-  // 获取平面图信息，并处理数据
-  async getMapData () {
-    this.nodeID = this.judgeNodeID()
-    let data = {
-      nodeId: this.nodeID
-    }
-
-    await this.$store.dispatch('getMapData', data)
-    let mapData = this.$store.state.mapData
-
-    for (let i = 0; i < mapData.ploygon.coorGroup.length; i++) {
-      let val = mapData.ploygon.coorGroup[i]
-      this.scaleMaxSet.push(findMax(val))
-      this.coorGroups.push(filter(val, 600))
-    }
-
-    this.uwbBaseCoor = mapData.uwbBaseCoor
-  }
-
   // 准备阶段
   async beforeDarw() {
     clearInterval(this.timer);
-    if (this.nowStatus === 0) {
+
+    await this.getMapData()
+    if (this.hasMapData === 0) {
       return
     } else {
-      await this.getMapData()
       this.drawBoundary()
       this.drawUWBBase()
 
       // 选择svg画布
-      let svg = d3.select("svg")
+      let svg = d3.select("#svg > svg")
 
       await this.initAllUWBInfo()
 
@@ -255,7 +310,7 @@ export default class Location extends Vue {
         // 每隔一段时间获取所有UWB标签信息
         await this.initAllUWBInfo()
         if (this.isUWBInfo === false) {
-          return    
+          return       
         } else {
           this.drawPoint(svg)
         }
@@ -266,12 +321,12 @@ export default class Location extends Vue {
   // 画边界
   drawBoundary () {
     // 移除svg内部节点
-    d3.selectAll("svg > *").remove()
+    d3.selectAll("#svg > svg > *").remove()
 
     this.coorGroups.forEach( (val) => {
       let hull = d3.polygonHull(val)
 
-      d3.select('svg').append('polygon')
+      d3.select('#svg > svg').append('polygon')
       .attr("points", hull)
       .attr("fill", "#ffcbd3")
       .attr("stroke", "black")
@@ -282,9 +337,9 @@ export default class Location extends Vue {
   // 画基站监测点
   drawUWBBase () {
     this.findMax()
-    let svg = d3.select("svg")
+    let svg = d3.select("#svg > svg")
     // 先清空以前的点
-    svg.selectAll('rect').remove()
+    svg.selectAll('#svg > svg > rect').remove()
 
     this.uwbBaseCoor.forEach( (val) => {
       svg.append('rect')
@@ -299,8 +354,8 @@ export default class Location extends Vue {
   // 画点
   drawPoint (svg: any) {
     // 先清空以前的点
-    svg.selectAll('circle').remove()
-    svg.selectAll('text').remove()
+    svg.selectAll('#svg > svg > circle').remove()
+    svg.selectAll('#svg > svg > text').remove()
 
     // 建立循环，同时画几个点
     for (let i = 0; i < this.allUWBInfo.length; i++) {
@@ -336,6 +391,9 @@ export default class Location extends Vue {
     this.nowAddress = this.machineAdd[0]
     this.nowStatus = this.status[0]
 
+    await this.initSysId()
+    this.nowSysId = this.sysId[0]
+
     await this.beforeDarw()
   }
 
@@ -344,9 +402,22 @@ export default class Location extends Vue {
   }
 
   // 选择地点
-  async changeSite (val: any, index: any) {
+  async changeSite (val: any) {
     this.nowAddress = val 
-    this.nowStatus = this.status[index]
+    await this.judgeNodeID()
+
+    if (this.nowStatus === 0) {
+
+    } else {
+      await this.initSysId()
+      this.nowSysId = this.sysId[0]
+      await this.beforeDarw()
+    }
+  }
+
+  // 选择主控机
+  async changeSys (val: any, index: any) {
+    this.nowSysId = val 
     this.open = false
 
     await this.beforeDarw()
@@ -373,6 +444,27 @@ export default class Location extends Vue {
 
 <style lang="scss">
   .main {
+
+    .siteTitle {
+      margin-top: 80px;
+      font-size: 80px;
+      &::before {
+        content: '';
+        border-left: 20px #ff6f00 solid;
+        padding-left: 30px;
+      }
+      margin-bottom: 80px;
+    }
+
+    .siteWrap {
+      display: block;
+      width: 90%;
+      margin: 0 auto;
+      .choose {
+        font-size: 86px;
+      }
+    }
+
     .title {
       font-size: 70px;
       .site {
@@ -436,7 +528,6 @@ export default class Location extends Vue {
       position: relative;
       margin-bottom: 80px;
       .title {
-        margin-top: 80px;
         font-size: 80px;
         &::before {
           content: '';

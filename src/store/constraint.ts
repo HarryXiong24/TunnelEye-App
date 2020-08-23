@@ -10,5 +10,6 @@ export interface State {
   weatherInfo: {}
   messageLists: {}
   messageContent: {}
-  mapData: {}
+  mapData: {},
+  sysId: [],
 }

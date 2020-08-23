@@ -297,3 +297,26 @@ export const reqMapData = (data: any) => {
     })
   })
 }
+
+// 获取sysId
+export const reqSysId = (data: any) => {
+  let promise = axios({
+    method: 'get',
+    url: BASE_URL + '/uwbsys/ids',
+    headers: {
+      'Authorization': decrypt(sessionStorage.getItem("token")),
+      'Content-Type': 'application/json; charset=UTF-8'
+    },
+    params: data
+  })
+
+  return new Promise<any>(function (resolve, reject) {
+    promise.then(function (response) {
+      // 成功了调用resolve()
+      resolve(response)
+    }).catch(function (error) {
+      //失败了调用reject()
+      reject(error)
+    })
+  })
+}

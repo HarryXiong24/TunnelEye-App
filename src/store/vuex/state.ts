@@ -14,6 +14,7 @@ const state: State = {
   messageLists: {},
   messageContent: {},
   mapData: {},
+  sysId: [],
 }
 
 export default state
