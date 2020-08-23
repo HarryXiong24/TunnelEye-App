@@ -2,10 +2,10 @@
   <div>
     <div class="main">
 
-      <div class='siteTitle'>位置选择</div> 
+      <div class='siteTitle'>选择信息</div> 
       <mu-row class="siteWrap">  
         <mu-col span="12" lg="4" sm="6">
-          <mu-select v-model="nowAddress" full-width class="choose" @change="changeSite(nowAddress)">
+          <mu-select label="请选择下位机" v-model="nowAddress" full-width class="choose" @change="changeSite(nowAddress)">
             <mu-option v-for="(option, index) in machineAdd" :key="index" :label="option" :value="option"></mu-option>
           </mu-select>
         </mu-col>
@@ -214,7 +214,6 @@ export default class Location extends Vue {
 
     await this.$store.dispatch('getSysId', data)
     let sysId = this.$store.state.sysId
-    console.log(sysId)
     if (!sysId || sysId.code === -1) {
       this.hasSysInfo = 0
     } else {
@@ -225,27 +224,27 @@ export default class Location extends Vue {
 
   // 获取平面图信息，并处理数据
   async getMapData () {
-    
-    let data = {
-      sysId: this.nowSysId
-    }
-
-    await this.$store.dispatch('getMapData', data)
-    let mapData = this.$store.state.mapData
-
-    if (!mapData || mapData.code === -1) {
-      this.hasMapData = 0
-    } else {
-      this.hasMapData = 1
-      for (let i = 0; i < mapData.ploygon.coorGroup.length; i++) {
-        let val = mapData.ploygon.coorGroup[i]
-        this.scaleMaxSet.push(findMax(val))
-        this.coorGroups.push(filter(val, 600))
+    if (this.nowSysId) {
+      let data = {
+        sysId: this.nowSysId
       }
 
-      this.uwbBaseCoor = mapData.uwbBaseCoor
-    }
+      await this.$store.dispatch('getMapData', data)
+      let mapData = this.$store.state.mapData
 
+      if (!mapData || mapData.code === -1) {
+        this.hasMapData = 0
+      } else {
+        this.hasMapData = 1
+        for (let i = 0; i < mapData.ploygon.coorGroup.length; i++) {
+          let val = mapData.ploygon.coorGroup[i]
+          this.scaleMaxSet.push(findMax(val))
+          this.coorGroups.push(filter(val, 600))
+        }
+
+        this.uwbBaseCoor = mapData.uwbBaseCoor
+      }
+    }
   }
 
   // 获取所有UWB定位标签的定位信息
