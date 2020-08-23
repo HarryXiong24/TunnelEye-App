@@ -26,5 +26,5 @@ export const RECEIVE_MESSAGELISTS = 'receive_messageLists'
 export const RECEIVE_MESSAGECONTENT = 'receive_messageContent'
 // 接受平面图信息
 export const RECEIVE_MAPDATA = 'receive_mapData'
-
-
+// 接受sysId
+export const RECEIVE_SYSID = 'receive_sysId'

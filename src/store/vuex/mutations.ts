@@ -14,6 +14,7 @@ import {
   RECEIVE_MESSAGELISTS,
   RECEIVE_MESSAGECONTENT,
   RECEIVE_MAPDATA,
+  RECEIVE_SYSID,
 } from './mutation-types'
 
 export default {
@@ -53,4 +54,7 @@ export default {
   [RECEIVE_MAPDATA] (state: State, {mapData}: any) {
     state.mapData = mapData
   },
+  [RECEIVE_SYSID] (state: State, {sysId}: any) {
+    state.sysId = sysId
+  }
 }
