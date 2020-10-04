@@ -206,7 +206,8 @@ export default class Analysis extends Vue {
     },
     yAxis: {
       name: "含量(%)",
-      max: 20,
+      min: -3,
+      max: 24,
       splitLine: {
         show: false
       }
@@ -243,7 +244,7 @@ export default class Analysis extends Vue {
         color: '#ff9933'
       }, {
         gt: 15,
-        lte: 20,
+        lte: 24,
         color: '#cc0033'
       }],
       outOfRange: {
@@ -303,7 +304,7 @@ export default class Analysis extends Vue {
       text: ['High', 'Low'],
       top: '20%',
       min: 0,
-      max: 20,
+      max: 24,
       dimension: 1,
       inRange: {
         color: ['#096', '#ffde33', '#ff9933', '#cc0033']
@@ -330,7 +331,7 @@ export default class Analysis extends Vue {
       }
     },
     dataZoom: [{
-      start: 96,
+      start: 95,
       end: 100
     }, {
       type: 'inside'
@@ -372,7 +373,7 @@ export default class Analysis extends Vue {
     legend: {
       left: 'center',
       bottom: '8%',
-      data: ['0%~5%', '5%~10%', '10%~15%', '15%~20%'],
+      data: ['0%~5%', '5%~10%', '10%~15%', '15%~24%'],
     },
     series: {
       name: '区间监测值个数',
@@ -450,7 +451,7 @@ export default class Analysis extends Vue {
         part2++
       } else if (val > 10 && val <= 15) {
         part3++
-      } else if (val > 15 && val <= 20) {
+      } else if (val > 15 && val <= 24) {
         part4++
       }
     })
@@ -458,7 +459,7 @@ export default class Analysis extends Vue {
       {value: part1, name:'0%~5%'},
       {value: part2, name:'5%~10%'},
       {value: part3, name:'10%~15%'},
-      {value: part4, name:'15%~20%'}
+      {value: part4, name:'15%~24%'}
     ]
   }
   // 更新下位机信息

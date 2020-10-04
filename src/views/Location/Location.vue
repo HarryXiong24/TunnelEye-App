@@ -251,8 +251,10 @@ export default class Location extends Vue {
   async initAllUWBInfo () {
 
     let data = {
-      startTime: moment().subtract(30, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
+      startTime: moment().subtract(1, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
       endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
+      // startTime: moment().subtract(30, "minutes").format("2020-09-22-21:38:30"),
+      // endTime: moment().format("2020-09-22-21:58:30"),
       sysId: this.nowSysId,
     }
 

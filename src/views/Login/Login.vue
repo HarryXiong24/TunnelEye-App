@@ -47,8 +47,8 @@ import {ValidateForm} from './constraint'
 export default class Login extends Vue {
   
   private validateForm: ValidateForm = {
-    username: 'wjy',
-    password: 'rrr123',
+    username: 'admin',
+    password: '123456',
     captcha: ''
   }
   private visibility = false
