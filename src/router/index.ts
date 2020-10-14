@@ -8,6 +8,7 @@ const PersonInfo = () => import("../views/PersonInfo/PersonInfo.vue");
 const Warning = () => import("../views/Warning/Warning.vue");
 const Analysis = () => import("../views/Analysis/Analysis.vue");
 const MessageContent = () => import("../views/MessageContent/MessageContent.vue");
+const PhysicalSign = () => import("../views/PhysicalSign/PhysicalSign.vue");
 
 Vue.use(VueRouter);
 
@@ -32,6 +33,11 @@ const routes: Array<RouteConfig> = [
     path: '/MessageContent',
     component: MessageContent,
     meta: { title: 'MessageContent', requiresAuth: true }
+  },
+  {
+    path: '/PhysicalSign',
+    component: PhysicalSign,
+    meta: { title: 'PhysicalSign', requiresAuth: true }
   },
   {
     path: '/Init',

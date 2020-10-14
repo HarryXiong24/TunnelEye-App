@@ -1,125 +1,132 @@
 <template>
-  <div>
-    <div class="main">
+  <div class="main">
 
-      <div class='siteTitle'>选择信息</div> 
-      <mu-row class="siteWrap">  
-        <mu-col span="12" lg="4" sm="6">
-          <mu-select label="请选择下位机" v-model="nowAddress" full-width class="choose" @change="changeSite(nowAddress)">
-            <mu-option v-for="(option, index) in machineAdd" :key="index" :label="option" :value="option"></mu-option>
-          </mu-select>
-        </mu-col>
-      </mu-row>
+    <div class='siteTitle'>选择信息</div> 
+    <mu-row class="siteWrap">  
+      <mu-col span="12" lg="4" sm="6">
+        <mu-select label="请选择下位机" v-model="nowAddress" full-width class="choose" @change="changeSite(nowAddress)">
+          <mu-option v-for="(option, index) in machineAdd" :key="index" :label="option" :value="option"></mu-option>
+        </mu-select>
+      </mu-col>
+    </mu-row>
 
-      <div class="subWrap">
-        <div class='title'>定位分布</div>
-        <div class="choose">
-          <div class="content">
-            <p class="text">主控机{{nowSysId}}</p>
-          </div>
-          <div class="chooseSite">
-            <mu-button ref="button" icon @click="open = !open">
-              <mu-icon value="keyboard_arrow_down"></mu-icon>
-            </mu-button>
-            <mu-popover cover :open.sync="open" :trigger="trigger">
-              <mu-list>
-                <mu-list-item v-for="(val, index) in sysId" :key="index" button @click="changeSys(val, index)">
-                  <mu-list-item-title>主控机{{val}}</mu-list-item-title>
-                </mu-list-item>
-              </mu-list>
-            </mu-popover>
-          </div>
+    <div class="subWrap">
+      <div class='title'>定位分布</div>
+      <div class="choose">
+        <div class="content">
+          <p class="text">主控机{{nowSysId}}</p>
+        </div>
+        <div class="chooseSite">
+          <mu-button ref="button" icon @click="open = !open">
+            <mu-icon value="keyboard_arrow_down"></mu-icon>
+          </mu-button>
+          <mu-popover cover :open.sync="open" :trigger="trigger">
+            <mu-list>
+              <mu-list-item v-for="(val, index) in sysId" :key="index" button @click="changeSys(val, index)">
+                <mu-list-item-title>主控机{{val}}</mu-list-item-title>
+              </mu-list-item>
+            </mu-list>
+          </mu-popover>
         </div>
       </div>
+    </div>
 
-      <div v-if="this.nowStatus === 1 && this.hasSysInfo === 1 && this.hasMapData === 1">
-        
-        <mu-row>
-          <mu-col span="12" id="svg">
-            <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
-            </svg>
-          </mu-col>
-        </mu-row>
-
-        <mu-row gutter justify-content="center">
-          <mu-col span="10" class="direct">
-            <div class="base">
-              <div class="square"></div>
-              <div>UWB基站</div>
-            </div>
-            <div class="base">
-              <div class="circle"></div>
-              <div>定位人员</div>
-            </div>
-            <div class="base">
-              <div class="area"></div>
-              <div>施工区域</div>
-            </div>
-          </mu-col>
-        </mu-row>
-
-        <mu-row gutter justify-content="center">
-          <mu-col span="12">
-            <p class="text">项目地点平面示意图</p>
-          </mu-col>
-        </mu-row>
-
-        <mu-row gutter justify-content="center" v-if="this.isUWBInfo === true">
-          <mu-col span="12">
-            <p class="text">上位机状态: 在线</p>
-            <mu-button icon color="red" class="update" @click="updateInfo">
-              <mu-icon value="autorenew"></mu-icon>
-            </mu-button>
-          </mu-col>
-        </mu-row>
-
-        <mu-row gutter justify-content="center" v-else>
-          <mu-col span="12">
-            <p class="text">上位机状态在线, 暂无人员定位信息</p>
-            <mu-button icon color="red" class="update">
-              <mu-icon value="autorenew"></mu-icon>
-            </mu-button>
-          </mu-col>
-        </mu-row>
-
-      </div>
-
-      <mu-row v-else-if="this.nowStatus === 1 && this.hasSysInfo === 1 && this.hasMapData === 0">
-        <mu-alert color="error" class="alert">
-          <mu-icon value="warning" class="icon"></mu-icon> 
-          <p class="content">抱歉，无平面图定位数据</p>
-        </mu-alert>
-      </mu-row> 
-
-      <mu-row v-else-if="this.nowStatus === 0">
-        <mu-alert color="error" class="alert">
-          <mu-icon value="warning" class="icon"></mu-icon> 
-          <p class="content">抱歉，该下位机离线，暂无数据</p>
-        </mu-alert>
-      </mu-row> 
-
-      <mu-row v-else-if="this.nowStatus === 1 && this.hasSysInfo === 0">
-        <mu-alert color="error" class="alert">
-          <mu-icon value="warning" class="icon"></mu-icon> 
-          <p class="content">抱歉，请查看是否安装主控机</p>
-        </mu-alert>
-      </mu-row> 
-
-      <mu-row v-else-if="this.nowStatus === -1" justify-content="center">
-        <mu-circular-progress class="loading" color="primary" :stroke-width="7" :size="56"></mu-circular-progress>
-        <mu-circular-progress class="loading" color="secondary" :stroke-width="7" :size="56"></mu-circular-progress>
-        <mu-circular-progress class="loading" color="warning" :stroke-width="7" :size="56"></mu-circular-progress>
-      </mu-row> 
-
-      <mu-row gutter justify-content="center">
-        <mu-col span="12" class="list"> 
-          <div class='title'>定位信息</div>
-
-          <LocatingInfo :locatingInfo="locatingInfo"></LocatingInfo>
-
+    <div v-if="this.nowStatus === 1 && this.hasSysInfo === 1 && this.hasMapData === 1">
+      
+      <mu-row>
+        <mu-col span="12" id="svg">
+          <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
+          </svg>
         </mu-col>
       </mu-row>
+
+      <mu-row gutter justify-content="center">
+        <mu-col span="10" class="direct">
+          <div class="base">
+            <div class="square"></div>
+            <div>UWB基站</div>
+          </div>
+          <div class="base">
+            <div class="circle"></div>
+            <div>定位人员</div>
+          </div>
+          <div class="base">
+            <div class="area"></div>
+            <div>施工区域</div>
+          </div>
+        </mu-col>
+      </mu-row>
+
+      <mu-row gutter justify-content="center">
+        <mu-col span="12">
+          <p class="text">项目地点平面示意图</p>
+        </mu-col>
+      </mu-row>
+
+      <mu-row gutter justify-content="center" v-if="this.isUWBInfo === true">
+        <mu-col span="12">
+          <p class="text">上位机状态: 在线</p>
+          <mu-button icon color="red" class="update" @click="updateInfo">
+            <mu-icon value="autorenew"></mu-icon>
+          </mu-button>
+        </mu-col>
+      </mu-row>
+
+      <mu-row gutter justify-content="center" v-else>
+        <mu-col span="12">
+          <p class="text">上位机状态在线, 暂无人员定位信息</p>
+          <mu-button icon color="red" class="update">
+            <mu-icon value="autorenew"></mu-icon>
+          </mu-button>
+        </mu-col>
+      </mu-row>
+
     </div>
+
+    <mu-row v-else-if="this.nowStatus === 1 && this.hasSysInfo === 1 && this.hasMapData === 0">
+      <mu-alert color="error" class="alert">
+        <mu-icon value="warning" class="icon"></mu-icon> 
+        <p class="content">抱歉，无平面图定位数据</p>
+      </mu-alert>
+    </mu-row> 
+
+    <mu-row v-else-if="this.nowStatus === 0">
+      <mu-alert color="error" class="alert">
+        <mu-icon value="warning" class="icon"></mu-icon> 
+        <p class="content">抱歉，该下位机离线，暂无数据</p>
+      </mu-alert>
+    </mu-row> 
+
+    <mu-row v-else-if="this.nowStatus === 1 && this.hasSysInfo === 0">
+      <mu-alert color="error" class="alert">
+        <mu-icon value="warning" class="icon"></mu-icon> 
+        <p class="content">抱歉，请查看是否安装主控机</p>
+      </mu-alert>
+    </mu-row> 
+
+    <mu-row v-else-if="this.nowStatus === -1" justify-content="center">
+      <mu-circular-progress class="loading" color="primary" :stroke-width="7" :size="56"></mu-circular-progress>
+      <mu-circular-progress class="loading" color="secondary" :stroke-width="7" :size="56"></mu-circular-progress>
+      <mu-circular-progress class="loading" color="warning" :stroke-width="7" :size="56"></mu-circular-progress>
+    </mu-row> 
+
+    <mu-row gutter justify-content="center">
+      <mu-col span="12" class="list"> 
+        <div class='title'>定位信息</div>
+
+        <LocatingInfo :locatingInfo="locatingInfo"></LocatingInfo>
+
+      </mu-col>
+    </mu-row>
+
+    <mu-row gutter justify-content="center" v-show="physicalSign === true">
+      <mu-col span="12" class="list"> 
+        <mu-button color="brown500" round class="goPhysicalSign" @click="goPhysicalSign">
+          查看个人体征信息
+        </mu-button>
+      </mu-col>
+    </mu-row>
+
   </div>
 </template>
 
@@ -179,6 +186,9 @@ export default class Location extends Vue {
 
   // 定时器
   public timer: any = 0
+
+  // 判断体征信息按钮
+  public physicalSign: boolean = false
 
   // 获取下位机地址
   async initMachineInfo () {
@@ -251,10 +261,10 @@ export default class Location extends Vue {
   async initAllUWBInfo () {
 
     let data = {
-      startTime: moment().subtract(1, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
-      endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
-      // startTime: moment().subtract(30, "minutes").format("2020-09-22-21:38:30"),
-      // endTime: moment().format("2020-09-22-21:58:30"),
+      // startTime: moment().subtract(1, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
+      // endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
+      startTime: moment().subtract(30, "minutes").format("2020-10-13-20:30:30"),
+      endTime: moment().format("2020-10-13-21:30:30"),
       sysId: this.nowSysId,
     }
 
@@ -283,7 +293,14 @@ export default class Location extends Vue {
     this.locatingInfo.sector = UWBData.depName
     this.locatingInfo.mobile = UWBData.mobile
     this.locatingInfo.groupName = UWBData.groupName
-  }
+
+    // 显示体征信息的标志
+    if(UWBData) {
+      this.physicalSign = true
+    } else {
+      this.physicalSign = false
+    }
+  } 
 
   // 准备阶段
   async beforeDarw() {
@@ -440,6 +457,12 @@ export default class Location extends Vue {
   updateInfo() {
     this.beforeDarw()
   }
+
+  // 跳转到体征页面
+  goPhysicalSign() {
+    let labelAdd = this.locatingInfo.id
+    this.$router.push(`/PhysicalSign?labelAdd=${labelAdd}`)
+  }
 }
 </script>
 
@@ -591,6 +614,12 @@ export default class Location extends Vue {
         border-left: 20px #ff6f00 solid;
         padding-left: 30px;
       }
+    }
+
+    .goPhysicalSign {
+      display: block;
+      margin: 40px auto;
+      width: 60%;
     }
   }
 </style>

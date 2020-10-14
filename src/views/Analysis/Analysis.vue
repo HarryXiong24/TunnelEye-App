@@ -248,7 +248,7 @@ export default class Analysis extends Vue {
         color: '#cc0033'
       }],
       outOfRange: {
-          color: '#999'
+        color: '#999'
       }
     },
     series: {
