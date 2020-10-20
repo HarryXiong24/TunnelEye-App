@@ -9,6 +9,7 @@ const Warning = () => import("../views/Warning/Warning.vue");
 const Analysis = () => import("../views/Analysis/Analysis.vue");
 const MessageContent = () => import("../views/MessageContent/MessageContent.vue");
 const PhysicalSign = () => import("../views/PhysicalSign/PhysicalSign.vue");
+const Fake = () => import("../views/Fake/Fake.vue");
 
 Vue.use(VueRouter);
 
@@ -65,7 +66,12 @@ const routes: Array<RouteConfig> = [
         path: '/Init/Warning',
         component: Warning,
         meta: { title: 'Warning', requiresAuth: true },
-      }
+      },
+      {
+        path: '/Init/Fake',
+        component: Fake,
+        meta: { title: 'Fake', requiresAuth: true },
+      },
     ]
   },
 ];

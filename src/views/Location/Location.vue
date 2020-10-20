@@ -11,7 +11,7 @@
     </mu-row>
 
     <div class="subWrap">
-      <div class='title'>定位分布</div>
+      <div class='title' @click="toFake">定位分布</div>
       <div class="choose">
         <div class="content">
           <p class="text">主控机{{nowSysId}}</p>
@@ -462,6 +462,11 @@ export default class Location extends Vue {
   goPhysicalSign() {
     let labelAdd = this.locatingInfo.id
     this.$router.push(`/PhysicalSign?labelAdd=${labelAdd}`)
+  }
+
+  // 跳转到模拟页面
+  toFake() {
+    this.$router.replace('/Init/Fake')
   }
 }
 </script>

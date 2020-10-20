@@ -104,7 +104,6 @@ export default class PhysicalSign extends Vue {
 
     await this.$store.dispatch('getUWBData', data);
     let UWBData = this.$store.state.UWBData
-    console.log(UWBData)
     
     this.person.id = UWBData.userid
     this.person.name = UWBData.userName
