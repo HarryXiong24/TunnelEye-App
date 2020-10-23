@@ -344,18 +344,18 @@ export default class Fake extends Vue{
         margin-left: 40px;
         padding-left: 20px;
         .name {
-          font-size: 68px;
+          font-size: 72px;
         }
         .content {
-          font-size: 60px;
+          font-size: 68px;
           color: rgba(0, 0, 0, .87);
         }
       }
       .item {
         margin-right: 60px;
         .msg {
-          width: 900px;
-          font-size: 60px;
+          width: 600px;
+          font-size: 62px;
         }
       }
     }
