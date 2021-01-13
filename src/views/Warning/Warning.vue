@@ -119,7 +119,7 @@
         <mu-list textline="two-line" class="list">
           <mu-sub-header class="subHeader">传感器预警</mu-sub-header>
           
-          <MessageList v-for="(list, index) in lists" :key=index :list="list"></MessageList>
+          <MessageList v-for="(list, index) in lists" :key="index" :list="list"></MessageList>
 
         </mu-list>
 

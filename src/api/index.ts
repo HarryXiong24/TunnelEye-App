@@ -5,7 +5,7 @@
 import axios from 'axios'
 // import '@/mock/mockServer.js'
 
-const BASE_URL = 'http://121.89.223.235:8081'
+const BASE_URL = 'http://182.92.221.129:8081'
 // const BASE_URL = '/api'
 import {decrypt} from '../util/crypto'
 
