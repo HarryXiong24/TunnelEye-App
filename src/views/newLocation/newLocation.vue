@@ -151,8 +151,8 @@ export default class Location extends Vue {
   public showBaseCoor: Array<any> = []        // 最终显示的基站坐标
   public outBaseCoor: Array<any> = []  
   public inBaseCoor: Array<any> = []  
-  public maxX: number = 0
-  public maxY: number = 0
+  public maxX: any = 0
+  public maxY: any = 0
   public showPoint: Array<any> = []  
 
   // 当前存在的人员信息
@@ -248,43 +248,51 @@ export default class Location extends Vue {
   async initAllUWBInfo () {
 
     let data = {
+      sysId: this.nowSysId,
       startTime: moment().subtract(1, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
       endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
       // startTime: "2021-05-05-22:55:59",
       // endTime: "2021-05-06-22:55:59",
-      sysId: this.nowSysId,
     }
 
     let response = await reqNewAllUWBInfo(data);
-    this.allUWBInfo = response.data;
 
-    if (this.allUWBInfo) {
-      this.isUWBInfo = true
-    } else {
+    if (response.data.code !== undefined) {
       this.isUWBInfo = false
+      this.showBaseCoor.forEach((value: any) => {
+        if (value[0] > this.maxX) {
+          this.maxX = value[0]
+        }
+        if (value[1] > this.maxY) {
+          this.maxY = value[1]
+        }
+      })
+    } else {
+      this.isUWBInfo = true
+      this.allUWBInfo = response.data;
+      // 判定并且保存最值
+      this.maxX = (this as any).allUWBInfo.data.range.maxX 
+      this.maxY = (this as any).allUWBInfo.data.range.maxY
+      
+      this.showBaseCoor.forEach((value: any) => {
+        if (value[0] > this.maxX) {
+          this.maxX = value[0]
+        }
+        if (value[1] > this.maxY) {
+          this.maxY = value[1]
+        }
+      })
+
+      // 存坐标的点
+      this.showPoint = [];
+     (this as any).allUWBInfo.data.uwbdata.forEach( (value: any) => {
+        let arr = []
+        arr.push(value.xcoor)
+        arr.push(value.ycoor)
+        this.showPoint.push(arr)
+      })
     }
 
-    // 判定并且保存最值
-    this.maxX = this.allUWBInfo.data.range.maxX 
-    this.maxY = this.allUWBInfo.data.range.maxY
-    
-    this.showBaseCoor.forEach((value: any) => {
-      if (value[0] > this.maxX) {
-        this.maxX = value[0]
-      }
-      if (value[1] > this.maxY) {
-        this.maxY = value[1]
-      }
-    })
-
-    // 存坐标的点
-    this.showPoint = []
-    this.allUWBInfo.data.uwbdata.forEach( (value: any) => {
-      let arr = []
-      arr.push(value.xcoor)
-      arr.push(value.ycoor)
-      this.showPoint.push(arr)
-    })
   }
 
   // 获取指定UWB数据
@@ -329,7 +337,12 @@ export default class Location extends Vue {
   // 准备阶段
   async beforeDarw() {
     await this.getMapData()
-    await this.initAllUWBInfo()
+    if (this.hasMapData === 0) {
+      return
+    } else {
+      await this.initAllUWBInfo()
+      await this.initChart()
+    }
   }
 
   async initChart() {
@@ -440,7 +453,7 @@ export default class Location extends Vue {
     this.chart.on('click', (params: any) => {
 	    if (params.componentType === 'series') {
         let labelAdd: number = -1;
-        this.allUWBInfo.data.uwbdata.forEach((value: any, index: number) => {
+        (this as any).allUWBInfo.data.uwbdata.forEach((value: any, index: number) => {
         if (index === params.dataIndex) {
           labelAdd = value.labelAdd
         }
@@ -460,7 +473,6 @@ export default class Location extends Vue {
     this.nowSysId = this.sysId[0]
 
     await this.beforeDarw()
-    await this.initChart()
   }
 
   beforeDestroy() {
@@ -474,7 +486,6 @@ export default class Location extends Vue {
   // 手动更新
   async updateInfo() {
     await this.beforeDarw()
-    await this.initChart()
   }
 
 }
