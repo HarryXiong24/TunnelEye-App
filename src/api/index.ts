@@ -132,6 +132,7 @@ export const reqSensorData = (data: any) => {
 
   return new Promise<any>(function (resolve, reject) {
     promise.then(function (response) {
+      console.log(response)
       // 成功了调用resolve()
       resolve(response)
     }).catch(function (error) {
@@ -146,6 +147,28 @@ export const reqAllUWBInfo = (data: any) => {
   let promise = axios({
     method: 'get',
     url: BASE_URL + '/uwb/datas',
+    headers: {
+      'Authorization': decrypt(sessionStorage.getItem("token"))
+    },
+    params: data
+  })
+
+  return new Promise<any>(function (resolve, reject) {
+    promise.then(function (response) {
+      // 成功了调用resolve()
+      resolve(response)
+    }).catch(function (error) {
+      //失败了调用reject()
+      reject(error)
+    })
+  })
+}
+
+// 新的获取所有UWB定位标签的定位信息
+export const reqNewAllUWBInfo = (data: any) => {
+  let promise = axios({
+    method: 'get',
+    url: BASE_URL + '/uwb/datas2',
     headers: {
       'Authorization': decrypt(sessionStorage.getItem("token"))
     },
@@ -199,7 +222,6 @@ export const reqIP = () => {
   return new Promise<any>(function (resolve, reject) {
     promise.then(function (response) {
       // 成功了调用resolve()
-      resolve(response)
     }).catch(function (error) {
       //失败了调用reject()
       reject(error)

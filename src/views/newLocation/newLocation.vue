@@ -11,7 +11,7 @@
     </mu-row>
 
     <div class="subWrap">
-      <div class='title' @click="toFake">定位分布</div>
+      <div class='title'>定位分布</div>
       <div class="choose">
         <div class="content">
           <p class="text">主控机{{nowSysId}}</p>
@@ -32,34 +32,23 @@
     </div>
 
     <div v-if="this.nowStatus === 1 && this.hasSysInfo === 1 && this.hasMapData === 1">
-      
-      <mu-row>
-        <mu-col span="12" id="svg">
-          <svg viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
-          </svg>
-        </mu-col>
-      </mu-row>
+
+      <div class="chartWrap">
+        <div class="chart">
+          <div id="echarts" class="echarts" />
+        </div>
+      </div>
 
       <mu-row gutter justify-content="center">
-        <mu-col span="10" class="direct">
+        <mu-col span="8" class="direct">
           <div class="base">
             <div class="square"></div>
-            <div>UWB基站</div>
-          </div>
-          <div class="base">
-            <div class="circle"></div>
             <div>定位人员</div>
           </div>
           <div class="base">
-            <div class="area"></div>
-            <div>施工区域</div>
+            <div class="circle"></div>
+            <div>UWB基站直线连接区域</div>
           </div>
-        </mu-col>
-      </mu-row>
-
-      <mu-row gutter justify-content="center">
-        <mu-col span="12">
-          <p class="text">项目地点平面示意图</p>
         </mu-col>
       </mu-row>
 
@@ -119,23 +108,15 @@
       </mu-col>
     </mu-row>
 
-    <mu-row gutter justify-content="center" v-show="physicalSign === true">
-      <mu-col span="12" class="list"> 
-        <mu-button color="brown500" round class="goPhysicalSign" @click="goPhysicalSign">
-          查看个人体征信息
-        </mu-button>
-      </mu-col>
-    </mu-row>
-
   </div>
 </template>
 
 <script lang="ts">
-import * as d3 from 'd3';
 import moment from 'moment';
 import { Vue, Component } from 'vue-property-decorator';
-import { scale, filter, findMax } from '../../util/scale';
 import LocatingInfo from '../../components/LocatingInfo/LocatingInfo.vue';
+import * as echarts from 'echarts'
+import { reqNewAllUWBInfo } from '../../api/index';
 
 @Component({
   components: {
@@ -157,21 +138,22 @@ export default class Location extends Vue {
   public open = false
   public trigger = null
 
-  // 平面图信息
-  public coorGroups: Array<any>[] = []       // 多个多边形坐标集合
-  public scaleMaxSet: Array<any> = []        // 各组多边形最大坐标集合
-  public scaleMax: number = 0                // 当前多边形最大坐标集合
-  public uwbBaseCoor: Array<any> = []        // 基站位置
+  // 基站信息
+  public uwbBaseCoor: Array<any> = []        // 返回的基站坐标
   public hasMapData: number = -1
 
   // 获取所有UWB标签信息
   public allUWBInfo: Array<any> = []
   public isUWBInfo: boolean = false
 
-  // 坐标信息
-  public cx: number = 0
-  public cy: number = 0
-  public second: number = 3
+  // chart图标的属性
+  public chart: any = null
+  public showBaseCoor: Array<any> = []        // 最终显示的基站坐标
+  public outBaseCoor: Array<any> = []  
+  public inBaseCoor: Array<any> = []  
+  public maxX: number = 0
+  public maxY: number = 0
+  public showPoint: Array<any> = []  
 
   // 当前存在的人员信息
   public locatingInfo: any = {
@@ -187,8 +169,7 @@ export default class Location extends Vue {
   // 定时器
   public timer: any = 0
 
-  // 判断体征信息按钮
-  public physicalSign: boolean = false
+  public lineChartOptions: any = {}
 
   // 获取下位机地址
   async initMachineInfo () {
@@ -224,6 +205,7 @@ export default class Location extends Vue {
 
     await this.$store.dispatch('getSysId', data)
     let sysId = this.$store.state.sysId
+
     if (!sysId || sysId.code === -1) {
       this.hasSysInfo = 0
     } else {
@@ -246,14 +228,19 @@ export default class Location extends Vue {
         this.hasMapData = 0
       } else {
         this.hasMapData = 1
-        for (let i = 0; i < mapData.ploygon.coorGroup.length; i++) {
-          let val = mapData.ploygon.coorGroup[i]
-          this.scaleMaxSet.push(findMax(val))
-          this.coorGroups.push(filter(val, 600))
-        }
+        
+        // 每次都要清空一下
+        this.uwbBaseCoor = []
+        this.showBaseCoor = []
 
         this.uwbBaseCoor = mapData.uwbBaseCoor
+        
+        this.uwbBaseCoor.forEach(value => {
+          let fommat = [value.xcoor, value.ycoor]
+          this.showBaseCoor.push(fommat)
+        })
       }
+
     }
   }
 
@@ -261,21 +248,43 @@ export default class Location extends Vue {
   async initAllUWBInfo () {
 
     let data = {
-      startTime: moment().subtract(1, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
-      endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
-      // startTime: moment().subtract(30, "minutes").format("2020-10-13-20:30:30"),
-      // endTime: moment().format("2020-10-13-21:30:30"),
+      // startTime: moment().subtract(1, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
+      // endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
+      startTime: "2021-05-05-22:55:59",
+      endTime: "2021-05-06-22:55:59",
       sysId: this.nowSysId,
     }
 
-    await this.$store.dispatch('getAllUWBInfo', data)
-    this.allUWBInfo = this.$store.state.allUWBInfo.data
-    // console.log(this.allUWBInfo) 
+    let response = await reqNewAllUWBInfo(data);
+    this.allUWBInfo = response.data;
+
     if (this.allUWBInfo) {
       this.isUWBInfo = true
     } else {
       this.isUWBInfo = false
     }
+
+    // 判定并且保存最值
+    this.maxX = this.allUWBInfo.data.range.maxX 
+    this.maxY = this.allUWBInfo.data.range.maxY
+    
+    this.showBaseCoor.forEach((value: any) => {
+      if (value[0] > this.maxX) {
+        this.maxX = value[0]
+      }
+      if (value[1] > this.maxY) {
+        this.maxY = value[1]
+      }
+    })
+
+    // 存坐标的点
+    this.showPoint = []
+    this.allUWBInfo.data.uwbdata.forEach( (value: any) => {
+      let arr = []
+      arr.push(value.xcoor)
+      arr.push(value.ycoor)
+      this.showPoint.push(arr)
+    })
   }
 
   // 获取指定UWB数据
@@ -293,132 +302,8 @@ export default class Location extends Vue {
     this.locatingInfo.sector = UWBData.depName
     this.locatingInfo.mobile = UWBData.mobile
     this.locatingInfo.groupName = UWBData.groupName
-
-    // 显示体征信息的标志
-    if(UWBData) {
-      this.physicalSign = true
-    } else {
-      this.physicalSign = false
-    }
   } 
-
-  // 准备阶段
-  async beforeDarw() {
-    clearInterval(this.timer);
-
-    await this.getMapData()
-    if (this.hasMapData === 0) {
-      return
-    } else {
-      this.drawBoundary()
-      this.drawUWBBase()
-
-      // 选择svg画布
-      let svg = d3.select("#svg > svg")
-
-      await this.initAllUWBInfo()
-
-      if (this.isUWBInfo === false) {
-
-      } else {
-        this.drawPoint(svg)
-      }
-
-      this.timer = setInterval( async () => {
-        // 每隔一段时间获取所有UWB标签信息
-        await this.initAllUWBInfo()
-        if (this.isUWBInfo === false) {
-          return       
-        } else {
-          this.drawPoint(svg)
-        }
-      }, this.second * 1000)
-    }
-  }
-
-  // 画边界
-  drawBoundary () {
-    // 移除svg内部节点
-    d3.selectAll("#svg > svg > *").remove()
-
-    this.coorGroups.forEach( (val) => {
-      let hull = d3.polygonHull(val)
-
-      d3.select('#svg > svg').append('polygon')
-      .attr("points", hull)
-      .attr("fill", "#ffcbd3")
-      .attr("stroke", "black")
-      .attr("stroke-width", 2)
-    })
-  }
-
-  // 画基站监测点
-  drawUWBBase () {
-    this.findMax()
-    let svg = d3.select("#svg > svg")
-    // 先清空以前的点
-    svg.selectAll('#svg > svg > rect').remove()
-
-    this.uwbBaseCoor.forEach( (val) => {
-      svg.append('rect')
-      .attr("x", scale(val.xcoor, this.scaleMax, 600))
-      .attr("y", scale(val.ycoor, this.scaleMax, 600))
-      .attr("height", 20)
-      .attr("width", 20)
-      .attr("fill", "#aa00ff")
-    })
-  }
-
-  // 画点
-  drawPoint (svg: any) {
-    // 先清空以前的点
-    svg.selectAll('#svg > svg > circle').remove()
-    svg.selectAll('#svg > svg > text').remove()
-
-    // 建立循环，同时画几个点
-    for (let i = 0; i < this.allUWBInfo.length; i++) {
-      let cx = Math.floor(scale(this.allUWBInfo[i].xcoor, this.scaleMax, 600))
-      let cy = Math.floor(scale(this.allUWBInfo[i].ycoor, this.scaleMax, 600))
-      let labelAdd = this.allUWBInfo[i].labelAdd
-      let that = this
-      // 添加点
-      svg.append('circle')
-      .attr("cx", cx)
-      .attr("cy", cy)
-      .attr("r", 13)
-      .attr("fill", "red")
-      .on("click", async function (this: any, d: any, i: any) {
-        await that.getUWBData(labelAdd)
-        d3.select(this) 
-        .attr("r", 14)
-        .attr("fill","#655bff")
-      })
-
-      // 点旁边添加序号
-      svg.append('text')
-      .attr("x", cx-10)
-      .attr("y", cy-10)
-      .attr("fill", "black")
-      .text(labelAdd)
-    }
-  }
-
-  async mounted () {
-    this.trigger = (this.$refs.button as any).$el 
-    await this.initMachineInfo()
-    this.nowAddress = this.machineAdd[0]
-    this.nowStatus = this.status[0]
-
-    await this.initSysId()
-    this.nowSysId = this.sysId[0]
-
-    await this.beforeDarw()
-  }
-
-  beforeDestroy() {
-    clearInterval(this.timer);
-  }
-
+  
   // 选择地点
   async changeSite (val: any) {
     this.nowAddress = val 
@@ -441,33 +326,157 @@ export default class Location extends Vue {
     await this.beforeDarw()
   }
 
-  // 求当前多边形最大坐标
-  findMax () {
-    let max = 0
-    this.scaleMaxSet.forEach( (val) => {
-      if (max < val) {
-        max = val
-      }
-    })
+  // 准备阶段
+  async beforeDarw() {
+    await this.getMapData()
+    await this.initAllUWBInfo()
+  }
 
-    this.scaleMax = max
+  async initChart() {
+    
+    this.lineChartOptions = {
+      toolbox: {
+        left: 'right',
+        feature: {
+          saveAsImage: {
+            show: true,
+            name: '定位示意图'
+          }
+        }
+      },
+      animation: true,
+      grid: {
+        top: 40,
+        left: 40,
+        right: 30,
+        bottom: 30
+      },
+      title: {
+        text: '单位: 米(m)',
+        textStyle: {
+          fontSize: 14,
+          color: '#999'
+        },
+        top: 0
+      },
+      tooltip: {
+        trigger: 'none',
+        triggerOn: 'click',
+      },
+      xAxis: {
+        name: 'x',
+        minorTick: {
+          show: true
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#999'
+          }
+        },
+        minorSplitLine: {
+          show: true,
+          lineStyle: {
+            color: '#ddd'
+          }
+        }
+      },
+      yAxis: {
+        name: 'y',
+        min: -100,
+        max: 100,
+        minorTick: {
+          show: true
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#999'
+          }
+        },
+        minorSplitLine: {
+          show: true,
+          lineStyle: {
+            color: '#ddd'
+          }
+        }
+      },
+      dataZoom: [{
+        show: true,
+        type: 'inside',
+        filterMode: 'none',
+        xAxisIndex: [0],
+        startValue: -(this.maxX+2),
+        endValue: (this.maxX+2)
+      }, {
+        show: true,
+        type: 'inside',
+        filterMode: 'none',
+        yAxisIndex: [0],
+        startValue: -(this.maxY+2),
+        endValue: (this.maxY+2)
+      }],
+      series: [
+      {
+        data: this.showBaseCoor,
+        type: 'line',
+        clip: true,
+        lineStyle: {
+          width: 3
+        }
+      },
+      {
+        symbolSize: 8,
+        data: this.showPoint,
+        type: 'scatter',
+        itemStyle: {
+          color: '#aa00ff'
+        }
+      }]
+    }
+
+    this.chart = echarts.init(document.getElementById('echarts') as any)
+
+    this.chart.setOption(this.lineChartOptions)
+
+    this.chart.on('click', (params: any) => {
+	    if (params.componentType === 'series') {
+        let labelAdd: number = -1;
+        this.allUWBInfo.data.uwbdata.forEach((value: any, index: number) => {
+        if (index === params.dataIndex) {
+          labelAdd = value.labelAdd
+        }
+        })
+        this.getUWBData(labelAdd)
+      }
+    });
+  }
+
+  async mounted () {
+    this.trigger = (this.$refs.button as any).$el 
+    await this.initMachineInfo()
+    this.nowAddress = this.machineAdd[0]
+    this.nowStatus = this.status[0]
+
+    await this.initSysId()
+    this.nowSysId = this.sysId[0]
+
+    await this.beforeDarw()
+    await this.initChart()
+  }
+
+  beforeDestroy() {
+    if (!this.chart) {
+      return
+    }
+    this.chart.dispose()
+    this.chart = null
   }
 
   // 手动更新
-  updateInfo() {
-    this.beforeDarw()
+  async updateInfo() {
+    await this.beforeDarw()
+    await this.initChart()
   }
 
-  // 跳转到体征页面
-  goPhysicalSign() {
-    let labelAdd = this.locatingInfo.id
-    this.$router.push(`/PhysicalSign?labelAdd=${labelAdd}`)
-  }
-
-  // 跳转到模拟页面
-  toFake() {
-    this.$router.replace('/Init/Fake')
-  }
 }
 </script>
 
@@ -506,13 +515,6 @@ export default class Location extends Vue {
 
     .loading {
       margin: 10px 100px;
-    }
-
-    #svg {
-      margin: 50px auto;
-      height: 98%;
-      width: 98%;
-      border: 10px #ff6f00 dashed;
     }
 
     .text {
@@ -626,5 +628,16 @@ export default class Location extends Vue {
       margin: 40px auto;
       width: 60%;
     }
+
+    .chartWrap{
+      .chart {
+        width: 100%;
+        margin: 30px auto;
+        .echarts {
+          width: 100% !important;
+        }
+      }
+    }
+
   }
 </style>

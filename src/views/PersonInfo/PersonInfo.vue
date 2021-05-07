@@ -69,7 +69,7 @@ export default class PersonInfo extends Vue {
     { title: '到岗时间', name: 'clockInTime', width: 200},
   ]
   public lists: Array<any> = []
-  public dateValue: any = new Date('2020-06-01')
+  public dateValue: any = new Date()
 
 
   async submit () {

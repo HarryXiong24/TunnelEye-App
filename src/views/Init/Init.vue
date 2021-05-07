@@ -11,7 +11,7 @@
     <mu-row justify-content="center" class="footerGuide">
       <mu-col span="12">
         <mu-bottom-nav :value.sync="shift" ripple color="amber800" @change="getHead">
-          <mu-bottom-nav-item value="Location" title="人员定位" icon="accessibility_new" to="/Init/Location" replace></mu-bottom-nav-item>
+          <mu-bottom-nav-item value="newLocation" title="人员定位" icon="accessibility_new" to="/Init/newLocation" replace></mu-bottom-nav-item>
           <mu-bottom-nav-item value="PersonInfo" title="出勤信息" icon="assignment" to="/Init/PersonInfo" replace></mu-bottom-nav-item>
           <mu-bottom-nav-item value="Analysis" title="环境监测" icon="assessment" to="/Init/Analysis" replace></mu-bottom-nav-item>
           <mu-bottom-nav-item value="Warning" title="预警信息" icon="info" to="/Init/Warning" replace></mu-bottom-nav-item>

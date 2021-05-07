@@ -10,6 +10,7 @@ const Analysis = () => import("../views/Analysis/Analysis.vue");
 const MessageContent = () => import("../views/MessageContent/MessageContent.vue");
 const PhysicalSign = () => import("../views/PhysicalSign/PhysicalSign.vue");
 const Fake = () => import("../views/Fake/Fake.vue");
+const newLocation = () => import("../views/newLocation/newLocation.vue")
 
 Vue.use(VueRouter);
 
@@ -22,7 +23,7 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/Init',
-    redirect: '/Init/Location',
+    redirect: '/Init/newLocation',
     meta: { title: 'Main', requiresAuth: true }
   },
   {
@@ -71,6 +72,11 @@ const routes: Array<RouteConfig> = [
         path: '/Init/Fake',
         component: Fake,
         meta: { title: 'Fake', requiresAuth: true },
+      },
+      {
+        path: '/Init/newLocation',
+        component: newLocation,
+        meta: { title: 'newLocation', requiresAuth: true },
       },
     ]
   },

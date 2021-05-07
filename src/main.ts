@@ -13,6 +13,7 @@ import store from "./store";
 Vue.use(MuseUI)
 Vue.use(echarts as any)
 Vue.component('v-chart', vueEcharts)
+Vue.prototype.$echarts = echarts
  
 Vue.config.productionTip = false;
 FastClick.attach(document.body);
