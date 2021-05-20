@@ -2,12 +2,12 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 const Login = () => import("../views/Login/Login.vue");
 const Init = () => import("../views/Init/Init.vue");
-const Location = () => import("../views/Location/Location.vue");
 const UserInfo = () => import("../views/UserInfo/UserInfo.vue");
 const PersonInfo = () => import("../views/PersonInfo/PersonInfo.vue");
 const Warning = () => import("../views/Warning/Warning.vue");
 const Analysis = () => import("../views/Analysis/Analysis.vue");
 const MessageContent = () => import("../views/MessageContent/MessageContent.vue");
+// const Location = () => import("../views/Location/Location.vue");
 // const PhysicalSign = () => import("../views/PhysicalSign/PhysicalSign.vue");
 // const Fake = () => import("../views/Fake/Fake.vue");
 const newLocation = () => import("../views/newLocation/newLocation.vue")

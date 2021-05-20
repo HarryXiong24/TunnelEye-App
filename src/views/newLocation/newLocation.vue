@@ -347,7 +347,7 @@ export default class Location extends Vue {
   }
 
   async initChart() {
-    
+
     this.lineChartOptions = {
       toolbox: {
         left: 'right',
