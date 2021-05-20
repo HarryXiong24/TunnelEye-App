@@ -1,0 +1,18 @@
+    <!-- 使用JSONP格式实现跨域访问获取IP -->
+    <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+    <!-- 这个必须要放到前面，后面的才能读取 -->
+    <script>
+      window.IPCallBack = function IPCallBack(data) {
+        console.log(data)
+        sessionStorage.setItem("location", JSON.stringify(data))
+      }
+    </script>
+    <script id="IPLocation"></script>
+    <!-- 这个是用来动态匹配IP -->
+    <script>
+      console.log(returnCitySN)
+      let IP = returnCitySN.cip
+      let IPLocation = document.getElementById("IPLocation")
+      let str = "http://whois.pconline.com.cn/ipJson.jsp?callback=IPCallBack&ip=" + IP
+      IPLocation.setAttribute("src", str)
+    </script>

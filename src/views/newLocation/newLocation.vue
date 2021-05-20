@@ -40,14 +40,14 @@
       </div>
 
       <mu-row gutter justify-content="center">
-        <mu-col span="8" class="direct">
+        <mu-col span="10" class="direct">
           <div class="base">
             <div class="square"></div>
             <div>定位人员</div>
           </div>
           <div class="base">
             <div class="circle"></div>
-            <div>UWB基站直线连接区域</div>
+            <div>UWB基站位置连线</div>
           </div>
         </mu-col>
       </mu-row>
@@ -64,7 +64,7 @@
       <mu-row gutter justify-content="center" v-else>
         <mu-col span="12">
           <p class="text">上位机状态在线, 暂无人员定位信息</p>
-          <mu-button icon color="red" class="update">
+          <mu-button icon color="red" class="update" @click="updateInfo">
             <mu-icon value="autorenew"></mu-icon>
           </mu-button>
         </mu-col>
@@ -249,13 +249,14 @@ export default class Location extends Vue {
 
     let data = {
       sysId: this.nowSysId,
-      startTime: moment().subtract(1, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
+      startTime: moment().subtract(10, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
       endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
       // startTime: "2021-05-05-22:55:59",
       // endTime: "2021-05-06-22:55:59",
     }
 
     let response = await reqNewAllUWBInfo(data);
+
 
     if (response.data.code !== undefined) {
       this.isUWBInfo = false
@@ -437,7 +438,7 @@ export default class Location extends Vue {
         }
       },
       {
-        symbolSize: 8,
+        symbolSize: 10,
         data: this.showPoint,
         type: 'scatter',
         itemStyle: {
@@ -450,15 +451,15 @@ export default class Location extends Vue {
 
     this.chart.setOption(this.lineChartOptions)
 
-    this.chart.on('click', (params: any) => {
+    this.chart.on('click', async (params: any) => {
 	    if (params.componentType === 'series') {
-        let labelAdd: number = -1;
+        let labelId: number = -1;
         (this as any).allUWBInfo.data.uwbdata.forEach((value: any, index: number) => {
         if (index === params.dataIndex) {
-          labelAdd = value.labelAdd
+          labelId = value.labelId
         }
         })
-        this.getUWBData(labelAdd)
+        await this.getUWBData(labelId)
       }
     });
   }
@@ -548,12 +549,14 @@ export default class Location extends Vue {
           width: 50px;
           height: 50px;
           background-color: rgb(255, 187, 198);
+          border-radius: 50px;
           margin: 0 30px;
         }
         .square {
           width: 50px;
           height: 50px;
           background-color: #aa00ff;
+          border-radius: 50px;
           margin: 0 30px;
         }   
         .circle {

@@ -8,12 +8,16 @@ const PersonInfo = () => import("../views/PersonInfo/PersonInfo.vue");
 const Warning = () => import("../views/Warning/Warning.vue");
 const Analysis = () => import("../views/Analysis/Analysis.vue");
 const MessageContent = () => import("../views/MessageContent/MessageContent.vue");
-const PhysicalSign = () => import("../views/PhysicalSign/PhysicalSign.vue");
-const Fake = () => import("../views/Fake/Fake.vue");
+// const PhysicalSign = () => import("../views/PhysicalSign/PhysicalSign.vue");
+// const Fake = () => import("../views/Fake/Fake.vue");
 const newLocation = () => import("../views/newLocation/newLocation.vue")
 
 Vue.use(VueRouter);
 
+// Fake页面是当初比赛为了防止没有数据而设置的假数据页面
+// PhysicalSign页面是人员生命体征监测页面，由于我们没有实现这个功能，所以也是假数据
+// Location为旧版定位页面
+// 上述三个页面现在也没有作用，放在temp文件夹里，路由配置也注释或者删除了
 const routes: Array<RouteConfig> = [
   {
     path: '/',
@@ -36,22 +40,27 @@ const routes: Array<RouteConfig> = [
     component: MessageContent,
     meta: { title: 'MessageContent', requiresAuth: true }
   },
-  {
-    path: '/PhysicalSign',
-    component: PhysicalSign,
-    meta: { title: 'PhysicalSign', requiresAuth: true }
-  },
+  // {
+  //   path: '/PhysicalSign',
+  //   component: PhysicalSign,
+  //   meta: { title: 'PhysicalSign', requiresAuth: true }
+  // },
   {
     path: '/Init',
     name: 'Init',
     component: Init,
     meta: { title: 'Init', requiresAuth: true },
     children: [
+      // {
+      //   path: '/Init/Location',
+      //   name: 'Location',
+      //   component: Location,
+      //   meta: { title: 'Location', requiresAuth: true }
+      // },
       {
-        path: '/Init/Location',
-        name: 'Location',
-        component: Location,
-        meta: { title: 'Location', requiresAuth: true }
+        path: '/Init/newLocation',
+        component: newLocation,
+        meta: { title: 'newLocation', requiresAuth: true },
       },
       {
         path: '/Init/PersonInfo',
@@ -68,16 +77,11 @@ const routes: Array<RouteConfig> = [
         component: Warning,
         meta: { title: 'Warning', requiresAuth: true },
       },
-      {
-        path: '/Init/Fake',
-        component: Fake,
-        meta: { title: 'Fake', requiresAuth: true },
-      },
-      {
-        path: '/Init/newLocation',
-        component: newLocation,
-        meta: { title: 'newLocation', requiresAuth: true },
-      },
+      // {
+      //   path: '/Init/Fake',
+      //   component: Fake,
+      //   meta: { title: 'Fake', requiresAuth: true },
+      // },
     ]
   },
 ];
