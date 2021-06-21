@@ -95,7 +95,7 @@ export default class Login extends Vue {
       this.openSimpleDialog('信息不能为空!')
     }
   }
-
+  
   openSimpleDialog(alertText: string): void {
     this.alert = true
     this.alertText = alertText
