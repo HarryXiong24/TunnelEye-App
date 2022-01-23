@@ -42,8 +42,10 @@ export default {
     // 将验证码请求里headers里的captcha值存入sessionStorage
     sessionStorage.setItem("captcha", result.headers.captcha)
     // 处理返回的图片
-    const captcha = 'data:image/png;base64,' + 
-    btoa( new Uint8Array(result.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+    // const captcha = 'data:image/png;base64,' + 
+    // btoa( new Uint8Array(result.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+    console.log(result);
+    const captcha = result.data;
     // 提交一个mutation
     commit(RECEIVE_CAPTCHA, {captcha})
   },

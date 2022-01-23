@@ -5,7 +5,7 @@
 import axios from 'axios'
 // import '@/mock/mockServer.js'
 
-const BASE_URL = 'http://182.92.221.129:8081'
+const BASE_URL = 'http://localhost:3000'
 // const BASE_URL = '/api'
 import {decrypt} from '../util/crypto'
 
@@ -15,8 +15,7 @@ export const reqCaptcha = () => {
   let promise = axios({
     method: 'GET', 
     url: BASE_URL + '/captcha',
-    withCredentials: false,
-    responseType: 'arraybuffer'
+    withCredentials: false
   })
   
   return new Promise<any>(function (resolve, reject) {

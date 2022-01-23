@@ -18,7 +18,7 @@
         </mu-form-item>
         <mu-form-item  icon="code" prop="captcha" :rules="captchaRules">
           <mu-text-field v-model="validateForm.captcha" placeholder="验证码"></mu-text-field>
-          <img class="captcha" :src="this.$store.state.captcha" alt="captcha" @click="changeCaptcha">
+          <img class="captcha" :src="captcha" alt="captcha" @click="changeCaptcha">
         </mu-form-item>
         <mu-form-item>
           <mu-button color="indigo400" @click="submit" round full-width ripple>登录</mu-button>
@@ -54,6 +54,7 @@ export default class Login extends Vue {
   private visibility = false
   private alert = false
   private alertText = ''
+  private captcha = ''
 
   data() {
     return {
@@ -106,8 +107,8 @@ export default class Login extends Vue {
     this.alertText = ''
   }
 
-  async changeCaptcha() {
-    await this.$store.dispatch('getCaptcha')
+  changeCaptcha() {
+    this.captcha = `http://localhost:3000/captcha?${Math.random()}`;
   }
 
   mounted() {
@@ -153,6 +154,7 @@ export default class Login extends Vue {
       margin: 0 auto;
       position: relative;
       .captcha {
+        width: 600px;
         position: absolute;
         bottom: 80px;
         right: -50px;
