@@ -12,7 +12,7 @@
       </template>
       <!-- 自定义表头 -->
       <template slot="header">
-        <tr style="height: 50px; lineHeight: 50px; backgroundColor: #ff5722;">
+        <tr style="height: 50px; lineHeight: 50px; backgroundColor: #ff5622e7;">
           <th class="is-left" id="th">工号</th>
           <th class="is-left" id="th">姓名</th>
           <th class="is-left" id="th">性别</th>
