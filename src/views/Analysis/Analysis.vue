@@ -498,11 +498,7 @@ export default class Analysis extends Vue {
     allSensorInfo.forEach((val: any) => {
       this.sensorIDOptions.push(String(val.sensorAdd))
     })
-    if (this.sensorType === '2') {
-      this.sensorIDNormal.value = this.sensorIDOptions[1] 
-    } else {
-      this.sensorIDNormal.value = this.sensorIDOptions[0] 
-    }
+    this.sensorIDNormal.value = this.sensorIDOptions[0] 
   }
   // 更新传感器获取数据
   async initSensorData() {
