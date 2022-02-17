@@ -170,7 +170,7 @@ export default class Analysis extends Vue {
   public sensorIDNormal = {
     value: ""
   }
-  public dateValue: Date = new Date()
+  public dateValue: Date = new Date('2022-01-23')
 
   // 决定统计图的类别
   public chartNormal = {
@@ -498,11 +498,13 @@ export default class Analysis extends Vue {
     allSensorInfo.forEach((val: any) => {
       this.sensorIDOptions.push(String(val.sensorAdd))
     })
-    if (this.sensorType === '2') {
-      this.sensorIDNormal.value = this.sensorIDOptions[1] 
-    } else {
-      this.sensorIDNormal.value = this.sensorIDOptions[0] 
+    for (let i = 0; i < this.sensorIDOptions.length; i++) {
+      if (this.sensorIDOptions[i] === '51') {
+        this.sensorIDOptions.splice(i, 1);
+        this.sensorIDOptions.unshift('51');
+      }
     }
+    this.sensorIDNormal.value = this.sensorIDOptions[0] 
   }
   // 更新传感器获取数据
   async initSensorData() {
