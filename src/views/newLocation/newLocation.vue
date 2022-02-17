@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <div v-if="this.nowStatus === 1 && this.hasSysInfo === 1 && this.hasMapData === 1">
+    <div v-if="this.hasSysInfo === 1 && this.hasMapData === 1">
 
       <div class="chartWrap">
         <div class="chart">
@@ -72,7 +72,7 @@
 
     </div>
 
-    <mu-row v-else-if="this.nowStatus === 1 && this.hasSysInfo === 1 && this.hasMapData === 0">
+    <!-- <mu-row v-else-if="this.nowStatus === 1 && this.hasSysInfo === 1 && this.hasMapData === 0">
       <mu-alert color="error" class="alert">
         <mu-icon value="warning" class="icon"></mu-icon> 
         <p class="content">抱歉，无平面图定位数据</p>
@@ -84,14 +84,14 @@
         <mu-icon value="warning" class="icon"></mu-icon> 
         <p class="content">抱歉，该下位机离线，暂无数据</p>
       </mu-alert>
-    </mu-row> 
+    </mu-row>  -->
 
-    <mu-row v-else-if="this.nowStatus === 1 && this.hasSysInfo === 0">
+    <!-- <mu-row v-else-if="this.nowStatus === 1 && this.hasSysInfo === 0">
       <mu-alert color="error" class="alert">
         <mu-icon value="warning" class="icon"></mu-icon> 
         <p class="content">抱歉，请查看是否安装主控机</p>
       </mu-alert>
-    </mu-row> 
+    </mu-row>  -->
 
     <mu-row v-else-if="this.nowStatus === -1" justify-content="center">
       <mu-circular-progress class="loading" color="primary" :stroke-width="7" :size="56"></mu-circular-progress>
@@ -234,11 +234,19 @@ export default class Location extends Vue {
         this.showBaseCoor = []
 
         this.uwbBaseCoor = mapData.uwbBaseCoor
+        const closeCoor: number[][] = []
         
         this.uwbBaseCoor.forEach(value => {
           let fommat = [value.xcoor, value.ycoor]
+          closeCoor.push([value.xcoor - 0.5, value.ycoor - 1])
           this.showBaseCoor.push(fommat)
         })
+        // 封闭
+        closeCoor.reverse().forEach((val) => {
+          this.showBaseCoor.push(val);
+        });
+        this.showBaseCoor.push(this.showBaseCoor[0])
+        console.log(this.showBaseCoor);
       }
 
     }
@@ -249,10 +257,10 @@ export default class Location extends Vue {
 
     let data = {
       sysId: this.nowSysId,
-      startTime: moment().subtract(10, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
-      endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
-      // startTime: "2021-05-05-22:55:59",
-      // endTime: "2021-05-06-22:55:59",
+      // startTime: moment().subtract(10, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
+      // endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
+      startTime: "2021-03-06-08:00:00",
+      endTime: "2021-03-06-18:00:00",
     }
 
     let response = await reqNewAllUWBInfo(data);
