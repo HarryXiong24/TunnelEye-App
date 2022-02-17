@@ -164,7 +164,7 @@ export default class Analysis extends Vue {
   }
   public sensorOptions: Array<string> = ["甲烷", "氧气", "硫化氢", "一氧化碳", "液位传感器"]
   public sensorNormal = {
-    value: "甲烷"
+    value: "氧气"
   }
   public sensorIDOptions: Array<string> = []
   public sensorIDNormal = {
@@ -498,7 +498,11 @@ export default class Analysis extends Vue {
     allSensorInfo.forEach((val: any) => {
       this.sensorIDOptions.push(String(val.sensorAdd))
     })
-    this.sensorIDNormal.value = this.sensorIDOptions[0] 
+    if (this.sensorType === '2') {
+      this.sensorIDNormal.value = this.sensorIDOptions[1] 
+    } else {
+      this.sensorIDNormal.value = this.sensorIDOptions[0] 
+    }
   }
   // 更新传感器获取数据
   async initSensorData() {
