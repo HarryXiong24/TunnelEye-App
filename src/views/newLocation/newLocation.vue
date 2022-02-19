@@ -149,6 +149,8 @@ export default class Location extends Vue {
   // chart图标的属性
   public chart: any = null
   public showBaseCoor: Array<any> = []        // 最终显示的基站坐标
+  public leftBaseCoor: Array<any> = [];
+  public rightBaseCoor: Array<any> = [];
   public outBaseCoor: Array<any> = []  
   public inBaseCoor: Array<any> = []  
   public maxX: any = 0
@@ -234,19 +236,29 @@ export default class Location extends Vue {
         this.showBaseCoor = []
 
         this.uwbBaseCoor = mapData.uwbBaseCoor
-        const closeCoor: number[][] = []
+        this.rightBaseCoor = [];
+        this.leftBaseCoor = [];
         
-        this.uwbBaseCoor.forEach(value => {
-          let fommat = [value.xcoor, value.ycoor]
-          closeCoor.push([value.xcoor - 0.5, value.ycoor - 1])
+        this.uwbBaseCoor.forEach((value, index) => {
+          const fommat = [value.xcoor, value.ycoor]
           this.showBaseCoor.push(fommat)
+          if (index === 0) {
+            this.leftBaseCoor.push([value.xcoor-2, value.ycoor])
+            this.rightBaseCoor.push([value.xcoor+2, value.ycoor])
+          } else if (index === 1) {
+            this.leftBaseCoor.push([value.xcoor-2, value.ycoor-2])
+            this.rightBaseCoor.push([value.xcoor+2, value.ycoor+2])
+          } else if (index === 2) {
+            this.leftBaseCoor.push([value.xcoor, value.ycoor-2])
+            this.rightBaseCoor.push([value.xcoor, value.ycoor+2])
+          }
         })
-        // 封闭
-        closeCoor.reverse().forEach((val) => {
-          this.showBaseCoor.push(val);
-        });
-        this.showBaseCoor.push(this.showBaseCoor[0])
-        console.log(this.showBaseCoor);
+
+        const arr = [[25, 7], [26, 4], [26.5, 1.75]]
+        arr.forEach((val) => {
+          this.leftBaseCoor.push([val[0], val[1]-2]);
+          this.rightBaseCoor.push([val[0], val[1]+2]);
+        })
       }
 
     }
@@ -257,10 +269,10 @@ export default class Location extends Vue {
 
     let data = {
       sysId: this.nowSysId,
-      // startTime: moment().subtract(10, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
-      // endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
-      startTime: "2021-03-06-08:00:00",
-      endTime: "2021-03-06-18:00:00",
+      startTime: moment().subtract(10, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
+      endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
+      // startTime: "2021-03-06-08:00:00",
+      // endTime: "2021-03-06-18:00:00",
     }
 
     let response = await reqNewAllUWBInfo(data);
@@ -404,7 +416,7 @@ export default class Location extends Vue {
       },
       yAxis: {
         name: 'y',
-        min: -100,
+        min: -50,
         max: 100,
         minorTick: {
           show: true
@@ -439,10 +451,29 @@ export default class Location extends Vue {
       series: [
       {
         data: this.showBaseCoor,
+        type: 'scatter',
+        clip: true,
+        lineStyle: {
+          width: 3,
+          color: '#e62e2d'
+        }
+      },
+      {
+        data: this.leftBaseCoor,
         type: 'line',
         clip: true,
         lineStyle: {
-          width: 3
+          width: 3,
+          color: '#ba4946'
+        }
+      },
+      {
+        data: this.rightBaseCoor,
+        type: 'line',
+        clip: true,
+        lineStyle: {
+          width: 3,
+          color: '#ba4946'
         }
       },
       {
