@@ -242,22 +242,14 @@ export default class Location extends Vue {
         this.uwbBaseCoor.forEach((value, index) => {
           const fommat = [value.xcoor, value.ycoor]
           this.showBaseCoor.push(fommat)
-          if (index === 0) {
-            this.leftBaseCoor.push([value.xcoor-2, value.ycoor])
-            this.rightBaseCoor.push([value.xcoor+2, value.ycoor])
-          } else if (index === 1) {
-            this.leftBaseCoor.push([value.xcoor-2, value.ycoor-2])
-            this.rightBaseCoor.push([value.xcoor+2, value.ycoor+2])
-          } else if (index === 2) {
-            this.leftBaseCoor.push([value.xcoor, value.ycoor-2])
-            this.rightBaseCoor.push([value.xcoor, value.ycoor+2])
-          }
+          this.leftBaseCoor.push([value.xcoor-3, value.ycoor])
+          this.rightBaseCoor.push([value.xcoor+3, value.ycoor])
         })
 
-        const arr = [[25, 7], [26, 4], [26.5, 1.75]]
+        const arr = [[25, 9], [26, 6], [27, 1]]
         arr.forEach((val) => {
-          this.leftBaseCoor.push([val[0], val[1]-2]);
-          this.rightBaseCoor.push([val[0], val[1]+2]);
+          this.leftBaseCoor.push([val[0]-3, val[1]]);
+          this.rightBaseCoor.push([val[0]+3, val[1]]);
         })
       }
 
@@ -269,10 +261,10 @@ export default class Location extends Vue {
 
     let data = {
       sysId: this.nowSysId,
-      startTime: moment().subtract(10, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
-      endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
-      // startTime: "2021-03-06-08:00:00",
-      // endTime: "2021-03-06-18:00:00",
+      // startTime: moment().subtract(10, "minutes").format("YYYY-MM-DD-HH:mm:ss"),
+      // endTime: moment().format("YYYY-MM-DD-HH:mm:ss"),
+      startTime: "2022-02-19-08:00:00",
+      endTime: "2022-02-19-21:00:00",
     }
 
     let response = await reqNewAllUWBInfo(data);
@@ -313,7 +305,6 @@ export default class Location extends Vue {
         this.showPoint.push(arr)
       })
     }
-
   }
 
   // 获取指定UWB数据
@@ -386,12 +377,13 @@ export default class Location extends Vue {
         bottom: 30
       },
       title: {
-        text: '单位: 米(m)',
+        text: this.nowAddress.split(':')[1] + '       单位: 米(m)',
         textStyle: {
           fontSize: 14,
           color: '#999'
         },
-        top: 0
+        top: 3,
+        left: 50
       },
       tooltip: {
         trigger: 'none',
@@ -416,7 +408,7 @@ export default class Location extends Vue {
       },
       yAxis: {
         name: 'y',
-        min: -50,
+        min: -10,
         max: 100,
         minorTick: {
           show: true
@@ -438,15 +430,15 @@ export default class Location extends Vue {
         type: 'inside',
         filterMode: 'none',
         xAxisIndex: [0],
-        startValue: -(this.maxX+2),
-        endValue: (this.maxX+2)
+        startValue: -5,
+        endValue: (this.maxX+6)
       }, {
         show: true,
         type: 'inside',
         filterMode: 'none',
         yAxisIndex: [0],
-        startValue: -(this.maxY+2),
-        endValue: (this.maxY+2)
+        startValue: -5,
+        endValue: (this.maxY+6)
       }],
       series: [
       {
