@@ -448,6 +448,14 @@ export default class Location extends Vue {
         lineStyle: {
           width: 3,
           color: '#e62e2d'
+        }, 
+        label: {
+          show: true,
+          position: 'top',
+          fontWeight: 'bold',
+          formatter: function(params: any) {
+            return `基站${params.dataIndex + 1}`
+          },
         }
       },
       {
