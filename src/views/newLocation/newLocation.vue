@@ -454,7 +454,26 @@ export default class Location extends Vue {
           position: 'top',
           fontWeight: 'bold',
           formatter: function(params: any) {
-            return `基站${params.dataIndex + 1}`
+            if (params.dataIndex === 0) {
+              return '主基站'
+            }
+            return `基站${params.dataIndex}`
+          },
+        }
+      },
+      {
+        data: [[5, 45], [20, 16]],
+        type: 'scatter',
+        clip: true,
+        label: {
+          show: true,
+          position: 'top',
+          fontWeight: 'bold',
+          formatter: function(params: any) {
+            if (params.dataIndex === 0) {
+              return '氧气传感器'
+            }
+            return `硫化氢传感器`
           },
         }
       },
