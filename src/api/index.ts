@@ -212,7 +212,8 @@ export const reqUWBData = (data: any) => {
 export const reqIP = () => {
   let promise = axios({
     method: 'get',
-    url: BASE_URL + '/ip',
+    // url: BASE_URL + '/ip',
+    url: 'http://1.117.141.152:3000/ip',
     headers: {
       'Authorization': decrypt(sessionStorage.getItem("token")),
       'Content-Type': 'application/json; charset=UTF-8'
