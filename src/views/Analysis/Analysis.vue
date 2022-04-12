@@ -170,7 +170,7 @@ export default class Analysis extends Vue {
   public sensorIDNormal = {
     value: ""
   }
-  public dateValue: Date = new Date()
+  public dateValue: Date = new Date('2021-03-06');
 
   // 决定统计图的类别
   public chartNormal = {
